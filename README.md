@@ -2,6 +2,29 @@
 
 **SONYCO** es un sistema integral de gestión interna desarrollado como proyecto final académico del tecnólogo **ADSO (Análisis y Desarrollo de Software)** impartido por el SENA. El proyecto implementa una solución fullstack completa para la gestión administrativa y operativa de empresas dedicadas a la comercialización de productos.
 
+# Índice
+
+- [Sistema SONYCO](#sistema-sonyco)
+  - [¿Qué es SONYCO?](#qué-es-sonyco)
+  - [Objetivo del Proyecto](#objetivo-del-proyecto)
+  - [Características Principales](#características-principales)
+  - [Arquitectura del Sistema](#arquitectura-del-sistema)
+    - [Frontend](#frontend)
+    - [Backend](#backend)
+    - [Base de Datos](#base-de-datos)
+  - [Entidades del Sistema](#entidades-del-sistema)
+  - [Funcionalidades Destacadas](#funcionalidades-destacadas)
+    - [Integridad de Datos](#integridad-de-datos)
+    - [Gestión de Ventas](#gestión-de-ventas)
+    - [Control de Usuarios](#control-de-usuarios)
+  - [Estructura del Repositorio](#estructura-del-repositorio)
+  - [Inicio Rápido](#inicio-rápido)
+    - [Prerrequisitos](#prerrequisitos)
+    - [Configuración Completa](#configuración-completa)
+  - [Contexto Académico](#contexto-académico)
+    - [Nota Importante](#nota-importante)
+  - [Contacto](#contacto)
+
 ## ¿Qué es SONYCO?
 
 Es una aplicación web diseñada para automatizar, optimizar y organizar los procesos administrativos y operativos que tradicionalmente se realizan de manera manual en empresas comercializadoras. El sistema centraliza la gestión de productos, categorías, inventarios, ventas, clientes y usuarios en una plataforma integrada y fácil de usar.
