@@ -79,7 +79,7 @@ El sistema gestiona las siguientes entidades principales:
 ## Estructura del Repositorio
 
 ```
-sonyco-system/
+SONYCO/
 ├── frontend/          # Aplicación React (Puerto 5173)
 │   ├── src/
 │   │   ├── pages/     # Páginas principales del sistema
@@ -108,7 +108,7 @@ sonyco-system/
 1. **Clonar el repositorio:**
 ```bash
 git clone <url-del-repositorio>
-cd sonyco-system
+cd SONYCO
 ```
 
 2. **Configurar el Backend:**
