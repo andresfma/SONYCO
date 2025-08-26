@@ -142,6 +142,8 @@ VITE_APP_NAME=SONYCO
 ```bash
 # Desde la carpeta backend
 python -m app.db.seed
+
+# Puedes usar el usuario admin@admin.com, con contraseña admin
 ```
 
 7. **Ejecutar el sistema:**
