@@ -6,7 +6,7 @@ from typing import List
 from app.db.session import get_session
 from app.models.cliente import TipoPersona
 from app.schemas.cliente import ClienteRead, ClienteUpdate, ClienteCreate, ClienteVentasResponse, ClienteReadSimple
-from app.schemas.shared import PagedResponse
+from app.schemas.shared import PagedResponse, ErrorResponse
 from app.services.cliente_service import (
     get_clientes, 
     get_cliente_by_email, 
@@ -22,7 +22,17 @@ from app.api.dependencies import get_current_user
 
 router = APIRouter()
 
-@router.get("/infinito", response_model=List[ClienteReadSimple], summary="Listar clientes activos")
+@router.get(
+        "/infinito", 
+        response_model=List[ClienteReadSimple], 
+        summary="Listar clientes activos",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_clientes_infinita(
     db: Session = Depends(get_session),
     skip: int = Query(0, ge=0, description="Número de registro desde donde empezar"),     
@@ -38,7 +48,17 @@ def listar_clientes_infinita(
     )
 
 
-@router.get("/con-ventas", response_model=ClienteVentasResponse, summary="Retorna el total de clientes con ventas")
+@router.get(
+        "/con-ventas", 
+        response_model=ClienteVentasResponse, 
+        summary="Retorna el total de clientes con ventas",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def clientes_con_ventas_total(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -46,21 +66,43 @@ def clientes_con_ventas_total(
     return get_numero_clientes_con_ventas(db)
 
 
-@router.post("/", response_model=ClienteRead, status_code=status.HTTP_201_CREATED, summary="Crear Cliente")
+@router.post(
+        "/", 
+        response_model=ClienteRead, 
+        status_code=status.HTTP_201_CREATED, 
+        summary="Crear Cliente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            409: {
+                "description": "Cliente ya existe",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def crear_cliente(
     cliente_create: ClienteCreate,
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
 ):
     """Crea un nuevo cliente."""
-    cliente = get_cliente_by_email(db, cliente_create.email)
-    if cliente:
-        raise HTTPException(status_code=400, detail="Cliente ya existe")
-    
+
     return create_cliente(db, cliente_create)
 
 
-@router.get("/", response_model=PagedResponse[ClienteRead], summary="Listar clientes con filtros")
+@router.get(
+        "/", 
+        response_model=PagedResponse[ClienteRead], 
+        summary="Listar clientes con filtros",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_clientes(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
@@ -84,7 +126,21 @@ def listar_clientes(
         )
 
 
-@router.get("/{cliente_id}", response_model=ClienteRead, summary="Obtener Cliente por ID")
+@router.get(
+        "/{cliente_id}", 
+        response_model=ClienteRead, 
+        summary="Obtener Cliente por ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Cliente no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def obtener_cliente(
     cliente_id: int,
     db: Session = Depends(get_session),
@@ -96,20 +152,53 @@ def obtener_cliente(
     return cliente
 
 
-@router.patch("/{cliente_id}", response_model=ClienteRead, summary="Actualizar Cliente")
+@router.patch(
+        "/{cliente_id}", 
+        response_model=ClienteRead, 
+        summary="Actualizar Cliente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Cliente existente",
+                "model": ErrorResponse
+            },
+            404: {
+                "description": "Cliente no encontrado",
+                "model": ErrorResponse
+            },
+        }
+        )
 def actualizar_cliente(
     cliente_id: int,
     cliente_update: ClienteUpdate,
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
 ):
-    cliente = update_cliente(db, cliente_id, cliente_update)
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente no encontrado")
-    return cliente
+    return update_cliente(db, cliente_id, cliente_update)
 
 
-@router.delete("/{cliente_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar Cliente")
+@router.delete(
+        "/{cliente_id}", 
+        status_code=status.HTTP_204_NO_CONTENT, 
+        summary="Eliminar Cliente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "No se puede eliminar, relaciones activas",
+                "model": ErrorResponse
+            },
+            404: {
+                "description": "Cliente no encontrado",
+                "model": ErrorResponse
+            },
+        }
+        )
 def eliminar_cliente(
     cliente_id: int,
     db: Session = Depends(get_session),
@@ -118,7 +207,21 @@ def eliminar_cliente(
     return delete_cliente(db, cliente_id)
 
 
-@router.patch("/{cliente_id}/estado", response_model=ClienteRead, summary="Cambiar estado del Cliente")
+@router.patch(
+        "/{cliente_id}/estado", 
+        response_model=ClienteRead, 
+        summary="Cambiar estado del Cliente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Cliente no encontrado",
+                "model": ErrorResponse
+            },
+        }
+        )
 def cambiar_estado_cliente(
     cliente_id: int,
     db: Session = Depends(get_session),

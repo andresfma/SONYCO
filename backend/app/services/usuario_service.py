@@ -122,7 +122,7 @@ def update_usuario(db: Session, usuario_id: int, datos: UsuarioUpdate) -> Option
     """Actualiza un usuario existente en la base de datos."""
     usuario = db.get(Usuario, usuario_id)
     if not usuario:
-        return None
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
     if datos.nombre is not None:
         usuario.nombre = datos.nombre
@@ -130,7 +130,7 @@ def update_usuario(db: Session, usuario_id: int, datos: UsuarioUpdate) -> Option
     if datos.email is not None and datos.email != usuario.email:
         existing = db.exec(select(Usuario).where(Usuario.email == datos.email)).first()
         if existing:
-            raise UsuarioExistsError(f"El usuario con email {datos.email} ya existe.")  
+            raise HTTPException(status_code=400, detail=(f"El usuario con email {datos.email} ya existe."))
         usuario.email = datos.email
     if datos.contrasena is not None:
         usuario.contrasena = get_password_hash(datos.contrasena)

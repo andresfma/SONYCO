@@ -3,7 +3,7 @@ from sqlalchemy import func, or_, distinct, asc, desc
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
 from pydantic import EmailStr 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from app.models.cliente import Cliente, TipoPersona
 from app.models.venta import Venta
@@ -102,11 +102,19 @@ def get_cliente_by_id(db: Session, cliente_id: int) -> Optional[ClienteRead]:
     return db.get(Cliente, cliente_id)
 
 
+def get_cliente_by_identificacion(db: Session, identificacion: str) -> Optional[ClienteRead]:
+    """Obtiene un cliente por su ID."""
+    return db.exec(select(Cliente).where(Cliente.identificacion == identificacion)).first()
+
+
 def create_cliente(db: Session, cliente_create: ClienteCreate) -> ClienteRead:
     """Crea un nuevo cliente."""
     
     if get_cliente_by_email(db, cliente_create.email):
-        raise ClienteExistsError("Cliente ya existe con este email")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cliente ya existe"
+        )
     
     cliente = Cliente.model_validate(cliente_create)
     db.add(cliente)
@@ -119,13 +127,29 @@ def update_cliente(db: Session, cliente_id: int, cliente_update: ClienteUpdate) 
     """Actualiza un cliente existente."""
     cliente = db.get(Cliente, cliente_id)
     if not cliente:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cliente no encontrado."
+        )
+
     
     # Verificar si el email ya existe
     if cliente_update.email and cliente_update.email != cliente.email:
         existing_cliente = get_cliente_by_email(db, cliente_update.email)
         if existing_cliente:
-            raise ClienteExistsError("Cliente ya existe con este email")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ya existe un cliente con este email."
+            )
+    
+    # Verificar si identificación ya existe
+    if cliente_update.identificacion and cliente_update.identificacion != cliente.identificacion:
+        existing_cliente = get_cliente_by_identificacion(db, cliente_update.identificacion)
+        if existing_cliente:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Ya existe un cliente con esta identificación."
+            )
 
     update_data = cliente_update.model_dump(exclude_unset=True)
     for key, value in update_data.items():

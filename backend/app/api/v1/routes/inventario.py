@@ -33,12 +33,30 @@ from app.services.inventario_service import (
 )
 from app.api.dependencies import get_current_user
 from app.models.usuario import Usuario
-from app.schemas.shared import PagedResponse
+from app.schemas.shared import PagedResponse, ErrorResponse
 
 router = APIRouter()
 
 
-@router.post("/movimientos/entrada", response_model=MovimientoInventarioRead, summary="Registrar entrada de inventario")
+@router.post(
+        "/movimientos/entrada", 
+        response_model=MovimientoInventarioRead, 
+        summary="Registrar entrada de inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Producto inactivo",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def registrar_entrada(
     data: MovimientoInventarioCreate,
     db: Session = Depends(get_session),
@@ -47,7 +65,25 @@ def registrar_entrada(
     return register_entrada(db, data, current_user=user)
 
 
-@router.post("/movimientos/salida", response_model=MovimientoInventarioRead, summary="Registrar salida de inventario")
+@router.post(
+        "/movimientos/salida", 
+        response_model=MovimientoInventarioRead, 
+        summary="Registrar salida de inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Producto inactivo o stock insuficiente",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def registrar_salida(
     data: MovimientoInventarioCreate,
     db: Session = Depends(get_session),
@@ -56,7 +92,17 @@ def registrar_salida(
     return register_salida(db, data, current_user=user)
 
 
-@router.get("/movimientos/producto/{producto_id}", response_model=PagedResponse[MovimientoInventarioDetailRead], summary="Historial de movimientos por producto (paginado)")
+@router.get(
+        "/movimientos/producto/{producto_id}", 
+        response_model=PagedResponse[MovimientoInventarioDetailRead], 
+        summary="Historial de movimientos por producto (paginado)",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def historial_movimientos_producto(
     producto_id: int,
     page: int = Query(1, ge=1, description="Número de página (desde 1)"),
@@ -74,7 +120,17 @@ def historial_movimientos_producto(
     )
 
 
-@router.get("/movimientos/usuario/{usuario_id}", response_model=PagedResponse[MovimientoInventarioDetailRead], summary="Historial de movimientos por usuario (paginado)")
+@router.get(
+        "/movimientos/usuario/{usuario_id}", 
+        response_model=PagedResponse[MovimientoInventarioDetailRead], 
+        summary="Historial de movimientos por usuario (paginado)",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def historial_movimientos_usuario(
     usuario_id: int,
     page: int = Query(1, ge=1, description="Número de página (desde 1)"),
@@ -92,7 +148,17 @@ def historial_movimientos_usuario(
     )
 
 
-@router.get("/movimientos", response_model=PagedResponse[MovimientoInventarioDetailRead], summary="Listar movimientos de inventario")
+@router.get(
+        "/movimientos", 
+        response_model=PagedResponse[MovimientoInventarioDetailRead], 
+        summary="Listar movimientos de inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_movimientos_inventario(
     db: Session = Depends(get_session),
     page: int = Query(1, ge=1, description="Número de página (comienza en 1)"),
@@ -114,7 +180,17 @@ def listar_movimientos_inventario(
     )
 
 
-@router.get("/stock-bajo", response_model=PagedResponse[InventarioReadDetail])
+@router.get(
+        "/stock-bajo", 
+        response_model=PagedResponse[InventarioReadDetail],
+        summary="Retorna el listado de productos con stock bajo",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_stock_bajo(
     db: Session = Depends(get_session),
     search: Optional[str] = Query(None, description="Buscar por nombre o código de producto"),
@@ -134,7 +210,17 @@ def listar_stock_bajo(
     )
 
 
-@router.get("/", response_model=PagedResponse[InventarioRead])
+@router.get(
+        "/", 
+        response_model=PagedResponse[InventarioRead],
+        summary="Listar inventarios con filtros",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_inventarios(
     db: Session = Depends(get_session),
     page: int = Query(1, ge=1),
@@ -156,7 +242,25 @@ def listar_inventarios(
         )
 
 
-@router.post("/", response_model=InventarioReadDetail, summary="Crear un nuevo inventario")
+@router.post(
+        "/", 
+        response_model=InventarioReadDetail, 
+        summary="Crear un nuevo inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Producto inválido",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def crear_inventario(
     data: InventarioCantidadCreate,
     db: Session = Depends(get_session),
@@ -165,7 +269,21 @@ def crear_inventario(
     return register_inventario(db, data)
 
 
-@router.get("/producto/{producto_id}", response_model=InventarioReadDetail, summary="Obtener inventario por ID de producto")
+@router.get(
+        "/producto/{producto_id}", 
+        response_model=InventarioReadDetail, 
+        summary="Obtener inventario por ID de producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def obtener_inventario_por_producto(
     producto_id: int,
     db: Session = Depends(get_session),
@@ -177,7 +295,21 @@ def obtener_inventario_por_producto(
     return inventario
 
 
-@router.get("/movimientos/{movimiento_inventario_id}", response_model=MovimientoInventarioDetailRead, summary="Obtener Movimiento por ID")
+@router.get(
+        "/movimientos/{movimiento_inventario_id}", 
+        response_model=MovimientoInventarioDetailRead, 
+        summary="Obtener Movimiento por ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Movimiento no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def obtener_movimiento_inventario(
     movimiento_inventario_id: int,
     db: Session = Depends(get_session),
@@ -189,7 +321,21 @@ def obtener_movimiento_inventario(
     return inventario
 
 
-@router.get("/{inventario_id}", response_model=InventarioRead, summary="Obtener Inventario por ID")
+@router.get(
+        "/{inventario_id}", 
+        response_model=InventarioRead, 
+        summary="Obtener Inventario por ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def obtener_inventario(
     inventario_id: int,
     db: Session = Depends(get_session),
@@ -201,7 +347,25 @@ def obtener_inventario(
     return inventario
 
 
-@router.patch("/{inventario_id}", response_model=InventarioReadDetail, summary="Actualizar inventario")
+@router.patch(
+        "/{inventario_id}", 
+        response_model=InventarioReadDetail, 
+        summary="Actualizar inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Inventario no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Inventario inactivo o cantidad inválida",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def actualizar_inventario(
     inventario_id: int,
     data: InventarioCantidadUpdate,
@@ -211,7 +375,21 @@ def actualizar_inventario(
     return update_inventario(db, inventario_id, data, current_user=user)
 
 
-@router.patch("/{inventario_id}/estado", response_model=InventarioReadDetail, summary="Cambiar estado del Inventario")
+@router.patch(
+        "/{inventario_id}/estado", 
+        response_model=InventarioReadDetail, 
+        summary="Cambiar estado del Inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Inventario no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def cambiar_estado_inventario(
     inventario_id: int,
     db: Session = Depends(get_session),

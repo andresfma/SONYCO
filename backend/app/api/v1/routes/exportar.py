@@ -21,11 +21,26 @@ from app.services.exportar_service import (
     exportar_categorias
 )
 from app.core.config import COL_TZ
+from app.schemas.shared import ErrorResponse
 
 router = APIRouter()
 
 
-@router.get("/inventarios", response_class=StreamingResponse, summary="Exportar inventario")
+@router.get(
+        "/inventarios", 
+        response_class=StreamingResponse, 
+        summary="Exportar inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_inventario(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -43,7 +58,21 @@ def descargar_inventario(
     )
 
 
-@router.get("/ventas", response_class=StreamingResponse, summary="Exportar ventas")
+@router.get(
+        "/ventas", 
+        response_class=StreamingResponse, 
+        summary="Exportar ventas",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_ventas(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -61,7 +90,21 @@ def descargar_ventas(
     )
 
 
-@router.get("/ventas/cliente/{cliente_id}", response_class=StreamingResponse, summary="Exportar ventas por cliente")
+@router.get(
+        "/ventas/cliente/{cliente_id}", 
+        response_class=StreamingResponse, 
+        summary="Exportar ventas por cliente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_ventas_por_cliente(
     cliente_id: int,
     db: Session = Depends(get_session),
@@ -81,7 +124,21 @@ def descargar_ventas_por_cliente(
     )
 
 
-@router.get("/clientes", response_class=StreamingResponse, summary="Exportar clientes")
+@router.get(
+        "/clientes", 
+        response_class=StreamingResponse, 
+        summary="Exportar clientes",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_clientes(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -99,7 +156,21 @@ def descargar_clientes(
     )
 
 
-@router.get("/categorias", response_class=StreamingResponse, summary="Exportar categorias")
+@router.get(
+        "/categorias", 
+        response_class=StreamingResponse, 
+        summary="Exportar categorias",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_categorias(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -117,7 +188,21 @@ def descargar_categorias(
     )
 
 
-@router.get("/productos", response_class=StreamingResponse, summary="Exportar productos")
+@router.get(
+        "/productos", 
+        response_class=StreamingResponse, 
+        summary="Exportar productos",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_productos(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -135,7 +220,21 @@ def descargar_productos(
     )
     
 
-@router.get("/usuarios", response_class=StreamingResponse, summary="Exportar usuarios")
+@router.get(
+        "/usuarios", 
+        response_class=StreamingResponse, 
+        summary="Exportar usuarios",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_usuarios(
     db: Session = Depends(get_session),
     admin=Depends(get_current_admin_user)
@@ -153,7 +252,21 @@ def descargar_usuarios(
     )
 
 
-@router.get("/movimientos/producto/{producto_id}", response_class=StreamingResponse, summary="Exportar movimientos de producto")
+@router.get(
+        "/movimientos/producto/{producto_id}", 
+        response_class=StreamingResponse, 
+        summary="Exportar movimientos de producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_movimientos_producto(
     producto_id: int,
     db: Session = Depends(get_session),
@@ -173,7 +286,21 @@ def descargar_movimientos_producto(
     )
     
     
-@router.get("/movimientos/usuario/{usuario_id}", response_class=StreamingResponse, summary="Exportar movimientos de producto")
+@router.get(
+        "/movimientos/usuario/{usuario_id}", 
+        response_class=StreamingResponse, 
+        summary="Exportar movimientos de producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_movimientos_producto(
     usuario_id: int,
     db: Session = Depends(get_session),
@@ -193,7 +320,21 @@ def descargar_movimientos_producto(
     )
 
 
-@router.get("/movimiento_inventarios", response_class=StreamingResponse, summary="Exportar todos los movimientos de inventario")
+@router.get(
+        "/movimiento_inventarios", 
+        response_class=StreamingResponse, 
+        summary="Exportar todos los movimientos de inventario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_movimientos_inventario(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -211,7 +352,21 @@ def descargar_movimientos_inventario(
     )
 
 
-@router.get("/detalles/{venta_id}", response_class=StreamingResponse, summary="Exportar detalle de venta por ID")
+@router.get(
+        "/detalles/{venta_id}", 
+        response_class=StreamingResponse,
+        summary="Exportar detalle de venta por ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            500: {
+                "description": "Error al generar el inventario",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def descargar_detalle_venta(
     venta_id: int,
     db: Session = Depends(get_session),

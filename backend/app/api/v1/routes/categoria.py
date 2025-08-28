@@ -17,13 +17,23 @@ from app.services.categoria_service import (
     change_estado_categoria,
     get_categorias_infinito
 )
-from app.schemas.shared import PagedResponse
+from app.schemas.shared import PagedResponse, ErrorResponse
 from app.db.session import get_session
 from app.api.dependencies import get_current_user
 
 router = APIRouter()
 
-@router.get("/infinito", response_model=List[CategoriaSimpleRead], summary="Listar categorías activas")
+@router.get(
+        "/infinito", 
+        response_model=List[CategoriaSimpleRead], 
+        summary="Listar categorías activas",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_categorias_infinita(
     db: Session = Depends(get_session),
     skip: int = Query(0, ge=0, description="Número de registro desde donde empezar"),     
@@ -38,7 +48,23 @@ def listar_categorias_infinita(
         search=search
     )
 
-@router.post("/", response_model=CategoriaDetailRead, status_code=status.HTTP_201_CREATED, summary="Crear una nueva categoría")
+
+@router.post(
+        "/", 
+        response_model=CategoriaDetailRead, 
+        status_code=status.HTTP_201_CREATED, 
+        summary="Crear una nueva categoría",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Categoría existente",
+                "model": ErrorResponse,
+            }
+        }
+        )
 def crear_categoria(
     categoria_create: CategoriaCreate,
     db: Session = Depends(get_session),
@@ -47,7 +73,17 @@ def crear_categoria(
     return create_categoria(db, categoria_create)
 
 
-@router.get("/", response_model=PagedResponse[CategoriaDetailRead], summary="Listar todas las categorías con búsqueda y paginación")
+@router.get(
+        "/", 
+        response_model=PagedResponse[CategoriaDetailRead], 
+        summary="Listar todas las categorías con búsqueda y paginación",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_categorias(
     db: Session = Depends(get_session),
     page: int = Query(1, ge=1, description="Número de página (comienza en 1)"),
@@ -69,7 +105,21 @@ def listar_categorias(
     )
 
 
-@router.get("/{categoria_id}", response_model=CategoriaDetailRead, summary="Obtener una categoría por su ID")
+@router.get(
+        "/{categoria_id}", 
+        response_model=CategoriaDetailRead, 
+        summary="Obtener una categoría por su ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Categoría no encontrada",
+                "model": ErrorResponse
+            },
+        }
+        )
 def obtener_categoria(
     categoria_id: int,
     db: Session = Depends(get_session),
@@ -81,7 +131,25 @@ def obtener_categoria(
     return categoria
 
 
-@router.patch("/{categoria_id}", response_model=CategoriaDetailRead, summary="Actualizar una categoría existente")
+@router.patch(
+        "/{categoria_id}", 
+        response_model=CategoriaDetailRead, 
+        summary="Actualizar una categoría existente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Categoría no encontrada",
+                "model": ErrorResponse
+            },
+            400: {
+                "description": "Categoría existente",
+                "model": ErrorResponse
+            },
+        }
+        )
 def actualizar_categoria(
     categoria_id: int,
     categoria_update: CategoriaUpdate,
@@ -91,7 +159,25 @@ def actualizar_categoria(
     return update_categoria(db, categoria_id, categoria_update)
 
 
-@router.delete("/{categoria_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar una categoría por su ID")
+@router.delete(
+        "/{categoria_id}", 
+        status_code=status.HTTP_204_NO_CONTENT, 
+        summary="Eliminar una categoría por su ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Categoría no encontrada",
+                "model": ErrorResponse
+            },
+            400: {
+                "description": "No se puede eliminar, relaciones activas",
+                "model": ErrorResponse
+            },
+        }
+        )
 def eliminar_categoria(
     categoria_id: int,
     db: Session = Depends(get_session),
@@ -100,7 +186,21 @@ def eliminar_categoria(
     delete_categoria(db, categoria_id)
 
 
-@router.patch("/{categoria_id}/estado", response_model=CategoriaDetailRead, summary="Cambiar estado del Categoria")
+@router.patch(
+        "/{categoria_id}/estado", 
+        response_model=CategoriaDetailRead, 
+        summary="Cambiar estado del Categoria",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Categoría no encontrada",
+                "model": ErrorResponse
+            },
+        }
+        )
 def cambiar_estado_categoria(
     categoria_id: int,
     db: Session = Depends(get_session),

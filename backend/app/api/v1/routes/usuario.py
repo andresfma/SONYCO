@@ -4,7 +4,7 @@ from typing import List, Optional
 
 from app.db.session import get_session
 from app.schemas.usuario import UsuarioRead, UsuarioCreate, UsuarioUpdate
-from app.schemas.shared import PagedResponse
+from app.schemas.shared import PagedResponse, ErrorResponse
 from app.services.usuario_service import (
     get_usuarios,
     get_usuario_by_id,
@@ -18,7 +18,17 @@ from app.api.dependencies import get_current_admin_user
 
 router = APIRouter()
 
-@router.get("/", response_model=PagedResponse[UsuarioRead], summary="Listar usuarios con búsqueda, filtro por estado y paginación")
+@router.get(
+        "/", 
+        response_model=PagedResponse[UsuarioRead], 
+        summary="Listar usuarios con búsqueda, filtro por estado y paginación",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_usuarios(
     db: Session = Depends(get_session),
     page: int = Query(1, ge=1, description="Número de página (comienza en 1)"),
@@ -40,7 +50,20 @@ def listar_usuarios(
     )
 
 
-@router.get("/{usuario_id}", response_model=UsuarioRead, summary="Obtener un usuario por ID")
+@router.get(
+        "/{usuario_id}", 
+        response_model=UsuarioRead, 
+        summary="Obtener un usuario por ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Usuario no encontrado",
+                "model": ErrorResponse,
+            },
+        })
 def obtener_usuario(
     usuario_id: int, 
     db: Session = Depends(get_session), 
@@ -52,7 +75,21 @@ def obtener_usuario(
     return usuario
 
 
-@router.post("/", response_model=UsuarioRead, summary="Crear un nuevo usuario", status_code=status.HTTP_201_CREATED)
+@router.post(
+        "/", 
+        response_model=UsuarioRead, 
+        summary="Crear un nuevo usuario", 
+        status_code=status.HTTP_201_CREATED,
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Usuario existente",
+                "model": ErrorResponse,
+            },
+        })
 def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_session), admin=Depends(get_current_admin_user)):
     try:
         return create_usuario(db, usuario)
@@ -60,20 +97,67 @@ def crear_usuario(usuario: UsuarioCreate, db: Session = Depends(get_session), ad
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.patch("/{usuario_id}", response_model=UsuarioRead, summary="Actualizar usuario existente")
+@router.patch(
+        "/{usuario_id}", 
+        response_model=UsuarioRead, 
+        summary="Actualizar usuario existente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Usuario no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Usuario existente",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def actualizar_usuario(usuario_id: int, datos: UsuarioUpdate, db: Session = Depends(get_session), admin=Depends(get_current_admin_user)):
-    usuario_actualizado = update_usuario(db, usuario_id, datos)
-    if not usuario_actualizado:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return usuario_actualizado
+    return update_usuario(db, usuario_id, datos)
 
 
-@router.delete("/{usuario_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar un usuario")
+@router.delete(
+        "/{usuario_id}", 
+        status_code=status.HTTP_204_NO_CONTENT, 
+        summary="Eliminar un usuario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Usuario no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "No se puede eliminar, tiene relaciones activas",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def eliminar_usuario(usuario_id: int, db: Session = Depends(get_session), admin=Depends(get_current_admin_user)):
     return delete_usuario(db, usuario_id)
 
 
-@router.patch("/{usuario_id}/estado", response_model=UsuarioRead, summary="Cambiar estado del Usuario")
+@router.patch(
+        "/{usuario_id}/estado", 
+        response_model=UsuarioRead, 
+        summary="Cambiar estado del Usuario",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Usuario no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def cambiar_estado_usuario(
     usuario_id: int,
     db: Session = Depends(get_session),

@@ -23,13 +23,28 @@ from app.schemas.venta import (
     VentaUpdateRead
 )
 from app.schemas.detalle_venta import DetalleVentaRead
-from app.schemas.shared import PagedResponse
+from app.schemas.shared import PagedResponse, ErrorResponse
 from app.models.venta import Venta
 from app.api.dependencies import get_current_user 
 
 router = APIRouter()
 
-@router.post("/", response_model=VentaDetailRead, status_code=status.HTTP_201_CREATED, summary="Crear Venta")
+@router.post(
+        "/", 
+        response_model=VentaDetailRead, 
+        status_code=status.HTTP_201_CREATED, 
+        summary="Crear Venta",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Cliente no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def crear_venta(
     request: VentaRequest,
     db: Session = Depends(get_session),
@@ -42,7 +57,17 @@ def crear_venta(
     )
 
 
-@router.get("/30dias", response_model=VentaTotalResponse, summary="Número de ventas en los últimos 30 días")
+@router.get(
+        "/30dias", 
+        response_model=VentaTotalResponse, 
+        summary="Número de ventas en los últimos 30 días",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def ventas_30_dias(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -50,7 +75,17 @@ def ventas_30_dias(
     return get_numero_ventas_ultimos_30_dias(db)
 
 
-@router.get("/", response_model=PagedResponse[VentaListRead], summary="Listar ventas paginadas y buscables")
+@router.get(
+        "/", 
+        response_model=PagedResponse[VentaListRead], 
+        summary="Listar ventas paginadas y buscables",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_ventas(
     search: Optional[str] = Query(None, description="Buscar por nombre de cliente o vendedor"),
     page: int = Query(1, ge=1, description="Número de página"),
@@ -72,7 +107,21 @@ def listar_ventas(
         )
     
 
-@router.get("/detalles/{venta_id}", response_model=PagedResponse[DetalleVentaRead], summary="Listar detalles de una venta paginadas y buscables")
+@router.get(
+        "/detalles/{venta_id}", 
+        response_model=PagedResponse[DetalleVentaRead], 
+        summary="Listar detalles de una venta paginadas y buscables, por venta_id",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Venta no encontrada",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_detalles_venta_por_venta_id(
     venta_id: int,
     search: Optional[str] = Query(None, description="Buscar por nombre o código de producto"),
@@ -94,12 +143,40 @@ def listar_detalles_venta_por_venta_id(
         )
 
 
-@router.get("/{venta_id}", response_model=VentaDetailRead, summary="Obtener Venta por su ID")
+@router.get(
+        "/{venta_id}", 
+        response_model=VentaDetailRead, 
+        summary="Obtener Venta por su ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Venta no encontrada",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def venta_by_id(venta_id: int, db: Session = Depends(get_session), user=Depends(get_current_user)):
     return get_venta_by_id(db, venta_id)
 
 
-@router.patch("/{venta_id}", response_model=VentaUpdateRead, summary="Actualizar Venta")
+@router.patch(
+        "/{venta_id}", 
+        response_model=VentaUpdateRead, 
+        summary="Actualizar Venta",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Entidad no encontrada",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def actualizar_venta(
     venta_id: int,
     venta_data: VentaUpdate,
@@ -109,20 +186,64 @@ def actualizar_venta(
     return update_venta(db, venta_id, venta_data)
 
 
-@router.delete("/{venta_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar Venta")
+@router.delete(
+        "/{venta_id}", 
+        status_code=status.HTTP_204_NO_CONTENT, 
+        summary="Eliminar Venta",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Venta no encontrada",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "No se puede eliminar, tiene relaciones activas",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def eliminar_venta(venta_id: int, db: Session = Depends(get_session), user=Depends(get_current_user)):
     return delete_venta(db, venta_id, user)
 
 
-@router.get("/cliente/{cliente_id}", response_model=List[VentaListRead], summary="Obtener Ventas por Cliente")
+@router.get(
+        "/cliente/{cliente_id}", 
+        response_model=List[VentaListRead], 
+        summary="Obtener Ventas por Cliente",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Ventas no encontradas para cliente",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def ventas_por_cliente(cliente_id: int, db: Session = Depends(get_session), user=Depends(get_current_user)):
-    ventas = get_venta_by_cliente_id(db, cliente_id)
-    if not ventas:
-        raise HTTPException(status_code=404, detail="No se encontraron ventas para este cliente")
-    return ventas
+    return get_venta_by_cliente_id(db, cliente_id)
 
 
-@router.patch("/{venta_id}/estado", response_model=VentaDetailRead, summary="Cambiar estado del Venta")
+
+@router.patch(
+        "/{venta_id}/estado", 
+        response_model=VentaDetailRead, 
+        summary="Cambiar estado del Venta",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Venta no encontrada",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def cambiar_estado_venta(
     venta_id: int,
     db: Session = Depends(get_session),

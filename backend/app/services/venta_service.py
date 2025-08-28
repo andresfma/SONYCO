@@ -271,7 +271,7 @@ def change_estado_venta(db: Session, venta_id: int) -> VentaDetailRead:
     venta = db.get(Venta, venta_id)
     
     if not venta:
-        raise HTTPException(status_code=404, detail="Venta no encontrado")
+        raise HTTPException(status_code=404, detail="Venta no encontrada")
 
     # Alternar el estado del usuario
     venta.estado = not venta.estado
@@ -588,6 +588,11 @@ def get_detalles_venta_by_venta_id(
       - producto_nombre (Usuario.nombre).
     """
 
+    venta = db.get(Venta, venta_id)
+
+    if not venta:
+        raise HTTPException(status_code=404, detail="venta no encontrada")
+
     # Construir filtros comunes
     filters = []
     
@@ -668,5 +673,5 @@ def get_detalle_venta_by_id(db: Session, detalle_id: int) -> DetalleVentaRead:
     ).first()
 
     if not detalle_venta:
-        raise HTTPException(status_code=404, detail="Venta no encontrada")
+        raise HTTPException(status_code=404, detail="Detalle de venta no encontrada")
     return detalle_venta

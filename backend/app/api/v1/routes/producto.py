@@ -12,7 +12,7 @@ from app.schemas.producto import (
     ProductoSimpleRead,
     ProductoInfinito
 )
-from app.schemas.shared import PagedResponse
+from app.schemas.shared import PagedResponse, ErrorResponse
 from app.services.producto_service import (
     get_productos, 
     get_producto_by_code, 
@@ -29,7 +29,17 @@ from app.api.dependencies import get_current_user
 
 router = APIRouter()
 
-@router.get("/infinito/inventario", response_model=List[ProductoInfinito], summary="Listar productos activos para vista de inventarios")
+@router.get(
+        "/infinito/inventario", 
+        response_model=List[ProductoInfinito], 
+        summary="Listar productos activos para vista de inventarios",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_productos_infinita_inventario(
     db: Session = Depends(get_session),
     skip: int = Query(0, ge=0, description="Número de registro desde donde empezar"),     
@@ -45,7 +55,17 @@ def listar_productos_infinita_inventario(
     )
     
 
-@router.get("/infinito/movimiento", response_model=List[ProductoInfinito], summary="Listar productos activos para vista de movimientos")
+@router.get(
+        "/infinito/movimiento", 
+        response_model=List[ProductoInfinito], 
+        summary="Listar productos activos para vista de movimientos",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_productos_infinita_movimiento(
     db: Session = Depends(get_session),
     skip: int = Query(0, ge=0, description="Número de registro desde donde empezar"),     
@@ -61,7 +81,22 @@ def listar_productos_infinita_movimiento(
     )
 
 
-@router.post("/", response_model=ProductoDetailRead, status_code=status.HTTP_201_CREATED, summary="Crear Producto")
+@router.post(
+        "/", 
+        response_model=ProductoDetailRead, 
+        status_code=status.HTTP_201_CREATED, 
+        summary="Crear Producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Producto existente",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def crear_producto(
     producto_create: ProductoCreate,
     db: Session = Depends(get_session),
@@ -70,7 +105,17 @@ def crear_producto(
     return create_producto(db, producto_create)
 
 
-@router.get("/total", response_model=ProductoTotalResponse, summary="Obtener número total de Productos")
+@router.get(
+        "/total", 
+        response_model=ProductoTotalResponse, 
+        summary="Obtener número total de Productos",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def total_productos(
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
@@ -78,7 +123,17 @@ def total_productos(
     return get_numero_total_productos(db)
 
 
-@router.get("/", response_model=PagedResponse[ProductoDetailRead], summary="Listar Productos con búsqueda y paginación")
+@router.get(
+        "/", 
+        response_model=PagedResponse[ProductoDetailRead], 
+        summary="Listar Productos con búsqueda y paginación",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def listar_productos( 
     search: Optional[str] = Query(None, description="Buscar por nombre o código del producto"),
     categoria: Optional[str] = Query(None, description="Buscar por nombre de categoría"),
@@ -102,7 +157,21 @@ def listar_productos(
     )
 
 
-@router.get("/code/{codigo}", response_model=ProductoDetailRead, summary="Obtener Producto por Código")
+@router.get(
+        "/code/{codigo}", 
+        response_model=ProductoDetailRead, 
+        summary="Obtener Producto por Código",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def obtener_producto_por_codigo(
     codigo: str,
     db: Session = Depends(get_session),
@@ -114,7 +183,21 @@ def obtener_producto_por_codigo(
     return producto
 
 
-@router.get("/{producto_id}", response_model=ProductoDetailRead, summary="Obtener Producto por ID")
+@router.get(
+        "/{producto_id}", 
+        response_model=ProductoDetailRead, 
+        summary="Obtener Producto por ID",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def obtener_producto(
     producto_id: int,
     db: Session = Depends(get_session),
@@ -126,7 +209,25 @@ def obtener_producto(
     return producto
 
 
-@router.patch("/{producto_id}", response_model=ProductoDetailRead, summary="Actualizar Producto")
+@router.patch(
+        "/{producto_id}", 
+        response_model=ProductoDetailRead, 
+        summary="Actualizar Producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "Producto existente",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def actualizar_producto(
     producto_id: int,
     producto_update: ProductoUpdate,
@@ -139,7 +240,25 @@ def actualizar_producto(
     return producto
 
 
-@router.delete("/{producto_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Eliminar Producto")
+@router.delete(
+        "/{producto_id}", 
+        status_code=status.HTTP_204_NO_CONTENT, 
+        summary="Eliminar Producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+            400: {
+                "description": "No se puede eliminar, tiene relaciones activas",
+                "model": ErrorResponse,
+            },
+        }
+        )
 def eliminar_producto(
     producto_id: int,
     db: Session = Depends(get_session),
@@ -148,7 +267,20 @@ def eliminar_producto(
     return delete_producto(db, producto_id)
 
 
-@router.patch("/{producto_id}/estado", response_model=ProductoDetailRead, summary="Cambiar estado del Producto")
+@router.patch(
+        "/{producto_id}/estado", 
+        response_model=ProductoDetailRead, 
+        summary="Cambiar estado del Producto",
+        responses={
+            401: {
+                "description": "No autorizado",
+                "model": ErrorResponse,
+            },
+            404: {
+                "description": "Producto no encontrado",
+                "model": ErrorResponse,
+            },
+        })
 def cambiar_estado_producto(
     producto_id: int,
     db: Session = Depends(get_session),
