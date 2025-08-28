@@ -63,7 +63,7 @@ npm install
 Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
-VITE_API_BASE_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8000/api/v1
 VITE_APP_NAME=SONYCO
 ```
 
