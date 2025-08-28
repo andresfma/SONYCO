@@ -215,7 +215,6 @@ export default function DetalleVentaCrear() {
             value={value}
             onChange={(newValue) => handleInputChange(field.key, newValue)}
             placeholder={field.placeholder || "Seleccionar..."}
-            error={error}
             required={field.required}
           />
         );

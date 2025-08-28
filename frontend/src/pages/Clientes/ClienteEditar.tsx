@@ -33,7 +33,7 @@ export default function ClienteEditar() {
                     return 'El nombre debe tener al menos 3 caracteres';
                 }
 
-                // Opcional: validar que solo tenga letras y espacios (si no quieres números ni símbolos)
+                // Validar que solo tenga letras y espacios (si no quieres números ni símbolos)
                 const nameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
                 if (!nameRegex.test(trimmed)) {
                     return 'El nombre solo puede contener letras y espacios';

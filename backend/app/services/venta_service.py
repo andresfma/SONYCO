@@ -214,7 +214,6 @@ def delete_venta(db: Session, venta_id: int, current_user: Usuario) -> bool:
     Elimina una venta y todos sus detalles,
     devolviendo el stock al inventario.
     """
-    #¡¡¡ requiere estado de activo/inactivo, para no borrar
     # Cargar venta con detalles y productos
     venta = db.exec(
         select(Venta)

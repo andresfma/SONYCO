@@ -13,7 +13,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Cargar variables de entorno
 load_dotenv()
 
-# Obtener URL de base de datos
+# Obtener secret key
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 

@@ -178,7 +178,6 @@ def get_numero_clientes_con_ventas(db: Session) -> ClienteVentasResponse:
         select(func.count(distinct(Venta.cliente_id)))
     ).one_or_none()
 
-    # total será una tupla, por ejemplo (5,), o None si no hay filas
     cantidad = total if total and total is not None else 0
 
     return ClienteVentasResponse(total=cantidad)
