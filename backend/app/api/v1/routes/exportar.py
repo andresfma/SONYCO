@@ -289,7 +289,7 @@ def descargar_movimientos_producto(
 @router.get(
         "/movimientos/usuario/{usuario_id}", 
         response_class=StreamingResponse, 
-        summary="Exportar movimientos de producto",
+        summary="Exportar movimientos de usuario",
         responses={
             401: {
                 "description": "No autorizado",
@@ -301,7 +301,7 @@ def descargar_movimientos_producto(
             },
         }
         )
-def descargar_movimientos_producto(
+def descargar_movimientos_usuario(
     usuario_id: int,
     db: Session = Depends(get_session),
     user=Depends(get_current_user)
