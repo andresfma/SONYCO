@@ -52,7 +52,7 @@ Demostrar la integración de tecnologías modernas orientadas a servicios para c
 
 ## Arquitectura del Sistema
 
-El proyecto implementa una **arquitectura orientada a servicios (SOA)** con separación clara entre componentes:
+El proyecto implementa una **arquitectura modular orientada a servicios** con separación clara entre componentes:
 
 ### Frontend
 - **Tecnología:** React + TypeScript + Vite + Tailwind CSS
