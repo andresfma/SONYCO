@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class RolBase(BaseModel):
     nombre: str
@@ -10,8 +10,7 @@ class RolCreate(RolBase):
 class RolRead(RolBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class RolUpdate(BaseModel):
     nombre: Optional[str] = None

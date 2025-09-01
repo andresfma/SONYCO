@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class CategoriaBase(BaseModel):
     nombre: str
@@ -12,15 +12,13 @@ class CategoriaCreate(CategoriaBase):
 class CategoriaDetailRead(CategoriaBase):
     id: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         
 class CategoriaSimpleRead(BaseModel):
     id: int
     nombre: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CategoriaUpdate(BaseModel):
     nombre: Optional[str] = None

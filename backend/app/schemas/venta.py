@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel, field_serializer, ConfigDict
 
 from app.schemas.detalle_venta import DetalleVentaRead, DetalleVentaCreate
 from app.schemas.usuario import UsuarioReadSimple
@@ -22,8 +22,7 @@ class VentaListRead(BaseModel):
     total: Optional[Decimal]
     estado: bool
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
     
 
     @field_serializer("fecha")
@@ -38,8 +37,7 @@ class VentaUpdateRead(BaseModel):
     cliente: Optional[ClienteReadSimple]
     estado: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class VentaUpdate(BaseModel):

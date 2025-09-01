@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.schemas.categoria import CategoriaSimpleRead
 from app.models.producto import UnidadMedida
 
@@ -23,31 +23,27 @@ class ProductoRead(BaseModel):
     precio_unitario: float
     estado: bool
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ProductoDetailRead(ProductoBase):
     categoria: CategoriaSimpleRead
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ProductoSimpleRead(BaseModel):
     id: int
     codigo: str
     nombre: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         
 
 class ProductoInfinito(BaseModel):
     id: int
     nombre: str
 
-    class Config:
-        from_attributes = True        
+    model_config = ConfigDict(from_attributes=True)    
 
 class ProductoTotalResponse(BaseModel):
     total: int

@@ -1,6 +1,6 @@
 from typing import Optional
 from decimal import Decimal
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.schemas.producto import ProductoSimpleRead
 
@@ -19,8 +19,7 @@ class DetalleVentaRead(BaseModel):
     venta_id: int
     producto: ProductoSimpleRead
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class DetalleVentaUpdate(BaseModel):
     producto_id: Optional[int] = None

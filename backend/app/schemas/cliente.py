@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from app.models.cliente import TipoPersona
 
 class ClienteBase(BaseModel):
@@ -17,15 +17,13 @@ class ClienteCreate(ClienteBase):
 class ClienteRead(ClienteBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ClienteReadSimple(BaseModel):
     id: int
     nombre: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         
 class ClienteVentasResponse(BaseModel):
     total: int

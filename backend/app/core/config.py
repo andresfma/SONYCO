@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from datetime import datetime, timezone, timedelta
 
 COL_TZ = timezone(timedelta(hours=-5))  # Zona horaria para Colombia (UTC-5)
@@ -13,7 +14,6 @@ class Settings(BaseSettings):
     STOCK_MINIMO: int = 5  # Valor por defecto para el stock mínimo
 
 
-    class Config:
-        env_file = ".env"
+    model_config = ConfigDict(env_file=".env")
 
 settings = Settings()

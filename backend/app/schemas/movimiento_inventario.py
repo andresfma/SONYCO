@@ -1,6 +1,6 @@
 from typing import Optional, Literal, List
 from datetime import datetime
-from pydantic import BaseModel, field_serializer
+from pydantic import BaseModel, field_serializer, ConfigDict
 from app.models.movimiento_inventario import TipoMovimientoEnum
 from app.schemas.producto import ProductoSimpleRead
 from app.schemas.usuario import UsuarioReadSimple
@@ -25,8 +25,7 @@ class MovimientoInventarioRead(MovimientoInventarioBase):
     usuario_id: int
     fecha: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
     
     @field_serializer("fecha")
     def serialize_fecha(self, fecha: datetime, _info):
@@ -43,8 +42,7 @@ class MovimientoInventarioDetailRead(BaseModel):
     fecha: datetime
     
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
         
     @field_serializer("fecha")
     def serialize_fecha(self, fecha: datetime, _info):

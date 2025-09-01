@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.schemas.producto import ProductoSimpleRead, ProductoRead
 
@@ -13,22 +13,19 @@ class InventarioReadDetail(InventarioBase):
     id: int
     producto: ProductoRead
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class InventarioRead(InventarioBase):
     id: int
     producto: ProductoSimpleRead
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class InventarioReadSimple(BaseModel):
     id: int
     cantidad: int
     
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
     
 class InventarioCantidadCreate(BaseModel):
     producto_id: int
