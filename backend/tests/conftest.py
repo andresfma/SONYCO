@@ -182,12 +182,42 @@ def usuario_fixture(session, rol_fixture):
         email="usuario@test.com",
         contrasena=get_password_hash("1234"),
         rol_id=rol_fixture.id,
-        estado=True,
+        estado=True
     )
     session.add(usuario)
     session.commit()
     session.refresh(usuario)
     return usuario
+
+@pytest.fixture
+def usuarios_fixture(session: Session, rol_fixture) -> list[Usuario]:
+    """Crea múltiples usuarios para pruebas de paginación y búsqueda"""
+    usuarios = [
+        Usuario(
+            nombre="Juan Pérez",
+            email="juan@example.com",
+            contrasena=get_password_hash("password123"),
+            rol_id=rol_fixture.id,
+            estado=True
+        ),
+        Usuario(
+            nombre="María García",
+            email="maria@example.com",
+            contrasena=get_password_hash("password456"),
+            rol_id=rol_fixture.id,
+            estado=True
+        ),
+        Usuario(
+            nombre="Pedro López",
+            email="pedro@example.com",
+            contrasena=get_password_hash("password789"),
+            rol_id=rol_fixture.id,
+            estado=False
+        )
+    ]
+    session.add_all(usuarios)
+    session.commit()
+    return usuarios
 
 
 # -------------------------------
