@@ -191,7 +191,7 @@ def change_estado_cliente(db: Session, cliente_id: int) -> ClienteRead:
     db.commit()
     db.refresh(cliente)
 
-    return cliente
+    return ClienteRead.model_validate(cliente)
 
 
 def get_numero_clientes_con_ventas(db: Session) -> ClienteVentasResponse:

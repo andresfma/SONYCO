@@ -267,6 +267,7 @@ def get_numero_ventas_ultimos_30_dias(db: Session) -> VentaTotalResponse:
 
 
 def change_estado_venta(db: Session, venta_id: int) -> VentaDetailRead:
+    
     """Desactiva un venta en la base de datos."""
     venta = db.get(Venta, venta_id)
     
@@ -279,7 +280,7 @@ def change_estado_venta(db: Session, venta_id: int) -> VentaDetailRead:
     db.commit()
     db.refresh(venta)
 
-    return venta
+    return VentaDetailRead.model_validate(venta)
 
 # CRUD para DetalleVenta
 

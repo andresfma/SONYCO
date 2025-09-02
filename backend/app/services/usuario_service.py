@@ -176,5 +176,5 @@ def change_estado_usuario(db: Session, usuario_id: int) -> UsuarioRead:
     db.commit()
     db.refresh(usuario)
 
-    return usuario
+    return UsuarioRead.model_validate(usuario)
     

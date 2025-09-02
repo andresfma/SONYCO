@@ -584,7 +584,8 @@ def change_estado_inventario(db: Session, inventario_id: int) -> InventarioReadD
 
     db.commit()
     db.refresh(inventario)
-    return inventario
+    
+    return InventarioReadDetail.model_validate(inventario)
 
 
 def get_inventario_by_id(db: Session, inventario_id: int) -> Optional[InventarioRead]:

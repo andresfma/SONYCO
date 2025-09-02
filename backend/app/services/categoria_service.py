@@ -158,7 +158,7 @@ def change_estado_categoria(db: Session, categoria_id: int) -> CategoriaDetailRe
     db.commit()
     db.refresh(categoria)
 
-    return categoria
+    return CategoriaDetailRead.model_validate(categoria)
 
 
 def get_categorias_infinito(

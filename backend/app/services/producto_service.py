@@ -229,7 +229,7 @@ def change_estado_producto(db: Session, producto_id: int) -> ProductoDetailRead:
     db.commit()
     db.refresh(producto)
     
-    return producto
+    return ProductoDetailRead.model_validate(producto)
 
 
 def get_productos_infinito_inventario(
