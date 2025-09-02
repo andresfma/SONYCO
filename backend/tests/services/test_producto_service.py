@@ -342,6 +342,7 @@ class TestDeleteProducto:
         assert exc_info.value.status_code == 400
         assert "No se puede eliminar" in exc_info.value.detail
 
+
 class TestChangeEstadoProducto:
     """Tests para la función change_estado_producto."""
     
