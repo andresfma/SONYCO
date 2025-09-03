@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 from unittest.mock import patch
 from fastapi import HTTPException
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from app.models.venta import Venta
 from app.models.detalle_venta import DetalleVenta
@@ -312,6 +312,17 @@ class TestAddDetalleVenta:
         inventario_updated = session.get(Inventario, inventario_fixture.id)
         assert inventario_updated.cantidad == cantidad_original - 3
 
+        # Verificar que se creó el movimiento
+        movimiento = session.exec(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.producto_id == inventario_fixture.producto_id)
+            .where(MovimientoInventario.tipo == TipoMovimientoEnum.VENTA)
+        ).first()
+        
+        assert movimiento is not None
+        assert movimiento.cantidad == 3  # Cantidad de detalle venta
+        assert movimiento.cantidad_inventario == inventario_fixture.cantidad
+
     def test_add_detalle_venta_stock_insuficiente(self, session: Session, venta_fixture, 
                                                 producto_fixture, inventario_fixture, usuario_fixture):
         """Test agregar detalle con stock insuficiente"""
@@ -368,6 +379,17 @@ class TestUpdateDetalleVenta:
         detalle_updated = next(d for d in result.detalle_ventas if d.id == detalle_venta_fixture.id)
         assert detalle_updated.cantidad == nueva_cantidad
 
+        # Verificar que se creó el movimiento
+        movimiento = session.exec(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.producto_id == inventario_fixture.producto_id)
+            .where(MovimientoInventario.tipo == TipoMovimientoEnum.VENTA)
+        ).first()
+        
+        assert movimiento is not None
+        assert movimiento.cantidad == 2  # Cantidad nueva del detalle venta
+        assert movimiento.cantidad_inventario == inventario_fixture.cantidad
+
     def test_update_detalle_venta_precio(self, session: Session, detalle_venta_fixture, usuario_fixture, inventario_fixture):
         """Test actualizar precio de detalle"""
         nuevo_precio = Decimal("25.00")
@@ -405,6 +427,18 @@ class TestDeleteDetalleVenta:
         # Verificar que el stock fue devuelto
         inventario_updated = session.get(Inventario, inventario_fixture.id)
         assert inventario_updated.cantidad == inventario_original + cantidad_original
+
+
+        # Verificar que se creó el movimiento
+        movimiento = session.exec(
+            select(MovimientoInventario)
+            .where(MovimientoInventario.producto_id == inventario_fixture.producto_id)
+            .where(MovimientoInventario.tipo == TipoMovimientoEnum.ANULACIÓN_VENTA)
+        ).first()
+        
+        assert movimiento is not None
+        assert movimiento.cantidad == 5  # Cantidad de detalle venta
+        assert movimiento.cantidad_inventario == inventario_fixture.cantidad
 
     def test_delete_detalle_venta_not_found(self, session: Session, usuario_fixture):
         """Test eliminar detalle inexistente"""

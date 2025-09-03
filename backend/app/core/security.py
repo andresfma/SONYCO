@@ -31,7 +31,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     """Crea un token de acceso JWT."""
     to_encode = data.copy()
     now_utc = datetime.now(timezone.utc)
-    if expires_delta:
+    
+    if expires_delta is not None:
         expire = now_utc + expires_delta
     else:
         expire = now_utc + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -46,6 +47,10 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 def decode_access_token(token: str) -> dict:
     """Decodifica un token de acceso JWT."""
+    
+    if not token:  # cubre None, "", etc.
+        return None
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[settings.ALGORITHM])
         return payload
