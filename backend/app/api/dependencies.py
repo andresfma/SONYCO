@@ -2,8 +2,6 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlmodel import Session
-from dotenv import load_dotenv
-import os
 
 from app.core.config import settings
 from app.db.session import get_session
@@ -12,11 +10,9 @@ from app.services.usuario_service import get_usuario_by_email
 
 auth_scheme = HTTPBearer()
 
-# Cargar variables de entorno
-load_dotenv()
-
 # Obtener Secret key
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(auth_scheme),
@@ -33,7 +29,7 @@ def get_current_user(
     )
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception

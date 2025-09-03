@@ -1,6 +1,15 @@
 from sqlmodel import SQLModel, create_engine
-from app.db.session import engine
+from dotenv import load_dotenv
+import os
 
+# Cargar variables de entorno desde el archivo .env.test
+load_dotenv(dotenv_path=".env.test")
+
+# Obtener URL de base de datos
+DATABASE_URL = os.getenv("DATABASE_URL")
+ 
+# Crear el motor
+engine = create_engine(DATABASE_URL, echo=True)
 
 # Importar modelos para que SQLModel registre las relaciones
 from app.models.cliente import Cliente

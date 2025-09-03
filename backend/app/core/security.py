@@ -10,11 +10,11 @@ import os
 # Hasheo de contraseñas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Cargar variables de entorno
-load_dotenv()
+# Obtener variables de settigs
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
-# Obtener secret key
-SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 def get_password_hash(password: str) -> str:
@@ -35,12 +35,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     if expires_delta is not None:
         expire = now_utc + expires_delta
     else:
-        expire = now_utc + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = now_utc + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode, 
         SECRET_KEY, 
-        algorithm=settings.ALGORITHM
+        algorithm=ALGORITHM
         )
     return encoded_jwt
 
@@ -52,7 +52,7 @@ def decode_access_token(token: str) -> dict:
         return None
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
         return None

@@ -1,14 +1,8 @@
 from sqlmodel import SQLModel, Session, create_engine
-from dotenv import load_dotenv
-import os
+from app.core.config import settings
 
-# Carga variables de entorno desde el archivo .env
-load_dotenv() 
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-# Crear el motor de la base de datos
-engine  = create_engine(DATABASE_URL, echo=True) # echo=True para ver las consultas SQL en la consola
+# Crear el motor
+engine = create_engine(settings.DATABASE_URL, echo=True)
 
 
 # Crear para obtener la sesión de la base de datos
