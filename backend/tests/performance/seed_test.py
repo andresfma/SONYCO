@@ -17,8 +17,8 @@ from app.models.usuario import Usuario
 from app.models.inventario import Inventario
 from app.models.categoria import Categoria
 
-# Importar engine de test
-from .session_test import engine_test
+# Importar engine
+from app.db.session import engine
 
 # Inicializar Faker
 fake = Faker()
@@ -32,7 +32,7 @@ NUM_MOVIMIENTOS = 400
 NUM_VENTAS = 300
 
 def seed_roles():
-    with Session(engine_test) as session:
+    with Session(engine) as session:
 
         roles = {"admin": None, "no-admin": None}
         for rol_nombre in roles.keys():
@@ -49,7 +49,7 @@ def seed_roles():
         
 
 def seed_usuarios(num_usuarios: int = NUM_USUARIOS):
-    with Session(engine_test) as session:
+    with Session(engine) as session:
 
         # ---------------------------
         # Crear usuario admin
@@ -95,7 +95,7 @@ def seed_usuarios(num_usuarios: int = NUM_USUARIOS):
 
 
 def seed_clientes(num_clientes: int = NUM_CLIENTES):
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         clientes = []
         for _ in range(num_clientes):
             tipo_persona = choice([TipoPersona.natural, TipoPersona.juridica])
@@ -123,7 +123,7 @@ def seed_clientes(num_clientes: int = NUM_CLIENTES):
 
 
 def seed_categorias(num_categorias: int = NUM_CATEGORIAS):
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         categorias = []
         for _ in range(num_categorias):
             nombre = fake.unique.word().capitalize()
@@ -140,7 +140,7 @@ def seed_categorias(num_categorias: int = NUM_CATEGORIAS):
 
 
 def seed_productos(num_productos: int = NUM_PRODUCTOS):
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         categorias = session.exec(select(Categoria)).all()
         if not categorias:
             raise ValueError("No hay categorías. Primero crea categorías en la DB de prueba.")
@@ -163,7 +163,7 @@ def seed_productos(num_productos: int = NUM_PRODUCTOS):
 
 
 def seed_inventario():
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         productos = session.exec(select(Producto)).all()
         if not productos:
             raise ValueError("No hay productos. Primero ejecuta la semilla de productos.")
@@ -184,7 +184,7 @@ def seed_inventario():
 
 
 def seed_movimientos_inventario(num_movimientos: int = NUM_MOVIMIENTOS):
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         productos = session.exec(select(Producto)).all()
         usuarios = session.exec(select(Usuario)).all()
 
@@ -223,7 +223,7 @@ def seed_movimientos_inventario(num_movimientos: int = NUM_MOVIMIENTOS):
 
 
 def seed_ventas(num_ventas: int = NUM_VENTAS):
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         clientes = session.exec(select(Cliente)).all()
         usuarios = session.exec(select(Usuario)).all()
 
@@ -250,7 +250,7 @@ def seed_ventas(num_ventas: int = NUM_VENTAS):
 
 
 def seed_detalles_venta():
-    with Session(engine_test) as session:
+    with Session(engine) as session:
         ventas = session.exec(select(Venta)).all()
         productos = session.exec(select(Producto)).all()
 
@@ -289,4 +289,5 @@ if __name__ == "__main__":
     seed_movimientos_inventario()
     seed_ventas()
     seed_detalles_venta()
+    print("Datos de prueba generados correctamente.")
 
