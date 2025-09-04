@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
 from datetime import datetime, timezone, timedelta
+import os
 
 COL_TZ = timezone(timedelta(hours=-5))  # Zona horaria para Colombia (UTC-5)
 
@@ -12,8 +13,12 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     STOCK_MINIMO: int = 5  # Valor por defecto para el stock mínimo
+    ENTORNO: str = "dev"  # Valor por defecto para el entorno
 
 
-    model_config = ConfigDict(env_file=".env")
+    # Aquí definimos dinámicamente el .env a usar
+    model_config = ConfigDict(
+        env_file=f".env.{os.getenv('ENV', 'dev')}"
+    )
 
 settings = Settings()
