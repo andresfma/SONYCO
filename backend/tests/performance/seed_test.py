@@ -172,8 +172,8 @@ def seed_inventario():
         for producto in productos:
             inventario = Inventario(
                 producto_id=producto.id,
-                cantidad=fake.random_int(min=5, max=500),       # stock aleatorio entre 5 y 500
-                cantidad_minima=fake.random_int(min=1, max=20), # stock mínimo aleatorio
+                cantidad=fake.random_int(min=40, max=500),       # stock aleatorio entre 5 y 500
+                cantidad_minima=fake.random_int(min=10, max=80), # stock mínimo aleatorio
                 estado=True
             )
             inventarios.append(inventario)
