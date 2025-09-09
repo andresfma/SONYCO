@@ -357,7 +357,8 @@ def get_movimientos_inventario(
             or_(
                 Usuario.nombre.ilike(f"%{search}%"),     
                 Producto.nombre.ilike(f"%{search}%"),     
-                Producto.codigo.ilike(f"%{search}%")
+                Producto.codigo.ilike(f"%{search}%"),
+                MovimientoInventario.id.ilike(f"%{search}%")
             )
         )
         joins.extend([MovimientoInventario.usuario, MovimientoInventario.producto])

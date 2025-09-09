@@ -164,7 +164,7 @@ def listar_movimientos_inventario(
     page: int = Query(1, ge=1, description="Número de página (comienza en 1)"),
     page_size: int = Query(50, ge=1, le=100, description="Cantidad de elementos por página"),
     tipo: Optional[TipoMovimientoEnum] = Query(None, description="Filtrar por tipo de movimiento"),
-    search: Optional[str] = Query(None, description="Buscar por nombre de usuario o nombre/código de producto"),
+    search: Optional[str] = Query(None, description="Buscar por nombre de usuario, nombre/código de producto o ID de movimiento"),
     sort_by: Optional[str] = Query(None, description="Columna para ordenar"),
     sort_order: Optional[str] = Query("asc", regex="^(asc|desc)$", description="Orden ascendente o descendente"),
     user=Depends(get_current_user)

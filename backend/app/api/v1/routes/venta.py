@@ -87,7 +87,7 @@ def ventas_30_dias(
         }
         )
 def listar_ventas(
-    search: Optional[str] = Query(None, description="Buscar por nombre de cliente o vendedor"),
+    search: Optional[str] = Query(None, description="Buscar por nombre de cliente, nombre de vendedor o id de venta"),
     page: int = Query(1, ge=1, description="Número de página"),
     page_size: int = Query(10, ge=1, le=100, description="Elementos por página"),
     db: Session = Depends(get_session),
@@ -124,7 +124,7 @@ def listar_ventas(
         )
 def listar_detalles_venta_por_venta_id(
     venta_id: int,
-    search: Optional[str] = Query(None, description="Buscar por nombre o código de producto"),
+    search: Optional[str] = Query(None, description="Buscar por nombre, código de producto o ID de detalle"),
     page: int = Query(1, ge=1, description="Número de página"),
     page_size: int = Query(10, ge=1, le=100, description="Elementos por página"),
     db: Session = Depends(get_session),

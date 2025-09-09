@@ -101,7 +101,7 @@ def get_ventas(
     """
     Obtiene ventas con filtros, búsqueda, paginación y ordenamiento dinámico.
     Filtros disponibles:
-      - search: busca en nombre de cliente o vendedor.
+      - search: busca en nombre de cliente, nombre de vendedor o ID de venta.
       - estado: filtra por estado de la venta.
     Soporta ordenamiento por:
       - Campos propios de Venta.
@@ -117,7 +117,8 @@ def get_ventas(
         filters.append(
             or_(
                 Cliente.nombre.ilike(search_term),
-                Usuario.nombre.ilike(search_term)
+                Usuario.nombre.ilike(search_term),
+                Venta.id.ilike(search_term)
             )
         )
 
@@ -583,7 +584,7 @@ def get_detalles_venta_by_venta_id(
     """
     Obtiene ventas con filtros, búsqueda, paginación y ordenamiento dinámico.
     Filtros disponibles:
-      - search: busca en nombre o código de producto.
+      - search: busca en nombre, código de producto o ID de detalle.
     Soporta ordenamiento por:
       - Campos propios de detalle_venta.
       - producto_nombre (Usuario.nombre).
@@ -604,7 +605,8 @@ def get_detalles_venta_by_venta_id(
         filters.append(
             or_(
                 Producto.nombre.ilike(search_term),
-                Producto.codigo.ilike(search_term)
+                Producto.codigo.ilike(search_term),
+                DetalleVenta.id.ilike(search_term)
             )
         )
 
