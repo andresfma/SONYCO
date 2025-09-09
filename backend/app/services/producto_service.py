@@ -179,6 +179,17 @@ def update_producto(db: Session, producto_id: int, producto_update: ProductoUpda
     for key, value in update_data.items():
         setattr(producto, key, value)
 
+    if "estado" in update_data:
+        inventario = db.exec(
+            select(Inventario)
+            .where(Inventario.producto_id == producto.id)
+        ).first()
+
+         # Sincronizar estado en inventario si existe
+        if inventario:
+            inventario.estado = update_data["estado"]
+            db.add(inventario)
+
     db.add(producto)
     db.commit()
     db.refresh(producto)
@@ -225,6 +236,7 @@ def change_estado_producto(db: Session, producto_id: int) -> ProductoDetailRead:
     inventario = get_inventario_by_product_id(db, producto.id)
     if inventario:
         inventario.estado = producto.estado
+        db.add(inventario)
 
     db.commit()
     db.refresh(producto)

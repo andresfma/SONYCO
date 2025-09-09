@@ -113,7 +113,13 @@ def create_cliente(db: Session, cliente_create: ClienteCreate) -> ClienteRead:
     if get_cliente_by_email(db, cliente_create.email):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Cliente ya existe"
+            detail=f"El cliente con email '{cliente_create.email}' ya existe"
+        )
+    
+    if get_cliente_by_identificacion(db, cliente_create.identificacion):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"El cliente con identificación '{cliente_create.identificacion}' ya existe"
         )
     
     cliente = Cliente.model_validate(cliente_create)

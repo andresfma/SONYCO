@@ -119,7 +119,19 @@ def register_inventario(db: Session, data: InventarioCantidadCreate) -> Inventar
     if not producto.estado:
         raise HTTPException(status_code=400, detail="El producto se encuentra inactivo")
     
-    nuevo = Inventario(producto_id=producto_id, cantidad=data.cantidad, cantidad_minima=data.cantidad_minima)
+    nuevo = Inventario(
+        producto_id=producto_id, 
+        cantidad=data.cantidad, 
+        cantidad_minima=data.cantidad_minima,
+        estado=data.estado
+        )
+    
+    # Si el inventario se crea como inactivo, desactivar también el producto
+    if nuevo.estado is False:
+        producto.estado = False
+        db.add(producto)
+    
+
     db.add(nuevo)
     db.commit()
     db.refresh(nuevo)
@@ -520,9 +532,6 @@ def update_inventario(
     ).first()
     if not inventario:
         raise HTTPException(status_code=404, detail="Inventario no encontrado")
-
-    if not inventario.estado and data.estado == False:
-        raise HTTPException(status_code=400, detail="El inventario del producto está inactivo")
     
     # Guardar valores previos para comparar
     cantidad_anterior = inventario.cantidad
@@ -530,6 +539,13 @@ def update_inventario(
     # Cambiar estado
     if data.estado is not None:
         inventario.estado = data.estado
+        # Sincronizar estado del producto
+        
+        producto = inventario.producto
+        if producto:
+            producto.estado = data.estado
+            db.add(producto)
+        
 
     # Validar y actualizar cantidad mínima
     if data.cantidad_minima is not None:
@@ -581,6 +597,7 @@ def change_estado_inventario(db: Session, inventario_id: int) -> InventarioReadD
     producto = inventario.producto
     if producto:
         producto.estado = inventario.estado
+        db.add(producto)
 
     db.commit()
     db.refresh(inventario)
