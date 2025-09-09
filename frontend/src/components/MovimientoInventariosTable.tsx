@@ -53,7 +53,7 @@ export function MovimientoInventariosTable({
             key: 'search',
             label: 'Búsqueda',
             type: 'text',
-            placeholder: 'Usuario o producto'
+            placeholder: 'ID, usuario o producto'
         },
         {
             key: 'tipo',

@@ -196,7 +196,7 @@ export default function VentaDetalle() {
                 key={refreshKey}
                 entityType='ventas'
                 entityId={id}
-                title='Detalle de la venta'
+                title='Detalle de la Venta'
                 subtitle='Información completa de la venta seleccionada.'
                 fields={ventaFields}
                 backPath='/ventas'

@@ -65,7 +65,7 @@ export function VentasTable({
             key: 'search',
             label: 'Búsqueda',
             type: 'text',
-            placeholder: 'Nombre cliente o vendedor'
+            placeholder: 'ID, cliente o vendedor'
         },
         {
             key: 'estado',

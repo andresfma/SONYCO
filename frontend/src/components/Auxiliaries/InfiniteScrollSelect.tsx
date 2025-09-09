@@ -159,6 +159,7 @@ export function InfiniteScrollSelect({
             {/* Input de búsqueda */}
             <div className="sticky top-0 bg-white px-3 py-2 border-b">
               <input
+                id='infinite-scroll-search-input'
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

@@ -68,7 +68,7 @@ export function DetalleVentasTable({
             key: 'search',
             label: 'Búsqueda',
             type: 'text',
-            placeholder: 'Nombre o código del producto'
+            placeholder: 'ID o producto'
         },
     ];
 
