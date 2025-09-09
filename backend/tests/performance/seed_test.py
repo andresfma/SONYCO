@@ -22,7 +22,7 @@ from app.db.session import engine
 
 # Inicializar Faker
 fake = Faker()
-Faker.seed(13)  # Semilla fija para reproducibilidad
+Faker.seed(13)  # Semilla fija para reproducibilidad, importante mantenerla en este valor para funcionalidades de prueba
 
 NUM_CATEGORIAS = 50
 NUM_PRODUCTOS = 200
@@ -69,7 +69,29 @@ def seed_usuarios(num_usuarios: int = NUM_USUARIOS):
             print("Usuario 'admin' creado.")
         else:
             print("Usuario 'admin' ya existe.")
+
+
+        # ---------------------------
+        # Crear usuario admin
+        # ---------------------------
         
+        email = "inactivo@inactivo.com"
+        existing_user = session.exec(select(Usuario).where(Usuario.email == email)).first()
+        if not existing_user:
+            user_inactivo = Usuario(
+                nombre="inactivo",
+                email=email,
+                contrasena=get_password_hash("inactivo"),  
+                rol_id=2,  # rol admin
+                estado=False
+            )
+            session.add(user_inactivo)
+            session.commit()
+            print("Usuario 'inactivo' creado.")
+        else:
+            print("Usuario 'inactivo' ya existe.")
+        
+
 
         # ---------------------------
         # Crear usuarios normales
@@ -146,9 +168,26 @@ def seed_productos(num_productos: int = NUM_PRODUCTOS):
             raise ValueError("No hay categorías. Primero crea categorías en la DB de prueba.")
 
         productos = []
-        for _ in range(num_productos):
+
+        # 1. Crear explícitamente el producto con P001
+        producto_inicial = Producto(
+            codigo="P001",
+            nombre=fake.word().capitalize(),
+            descripcion=fake.sentence(nb_words=6),
+            precio_unitario=round(uniform(1000, 500000), 2),
+            unidad_medida=choice(list(UnidadMedida)),
+            categoria_id=choice(categorias).id,
+            estado=True
+        )
+        productos.append(producto_inicial)
+
+        # 2. Generar el resto, cuidando que no salga P001 otra vez
+        while len(productos) < num_productos:
+            codigo = fake.unique.bothify(text="P###")
+            if codigo == "P001":  # por si acaso Faker intenta repetir
+                continue
             producto = Producto(
-                codigo=fake.unique.bothify(text="P###"),
+                codigo=codigo,
                 nombre=fake.word().capitalize(),
                 descripcion=fake.sentence(nb_words=6),
                 precio_unitario=round(uniform(1000, 500000), 2),
@@ -157,6 +196,7 @@ def seed_productos(num_productos: int = NUM_PRODUCTOS):
                 estado=True
             )
             productos.append(producto)
+
         session.add_all(productos)
         session.commit()
         print(f"{num_productos} productos creados en la base de prueba.")

@@ -198,7 +198,22 @@ class TestCreateCliente:
             create_cliente(session, cliente_data)
         
         assert exc_info.value.status_code == 409
-        assert "Cliente ya existe" in str(exc_info.value.detail)
+        assert "El cliente con email 'juan@example.com' ya existe" in str(exc_info.value.detail)
+    
+    def test_create_cliente_identificacion_duplicado(self, session: Session, cliente_fixture):
+        """Test error al crear cliente con identificación duplicada"""
+        cliente_data = ClienteCreate(
+            nombre="Cliente Duplicado",
+            email="correonuevoeinexistente@example.com",  # Email ya existe
+            tipo_persona=TipoPersona.natural,
+            identificacion="1234567890"
+        )
+        
+        with pytest.raises(HTTPException) as exc_info:
+            create_cliente(session, cliente_data)
+        
+        assert exc_info.value.status_code == 409
+        assert "El cliente con identificación '1234567890' ya existe" in str(exc_info.value.detail)
     
     def test_create_cliente_campos_opcionales_none(self, session: Session):
         """Test crear cliente con campos opcionales None"""
