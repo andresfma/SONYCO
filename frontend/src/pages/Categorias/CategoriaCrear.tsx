@@ -26,12 +26,6 @@ export default function CategoriaCrear() {
                     return 'El nombre debe tener al menos 3 caracteres';
                 }
 
-                // Validar que solo tenga letras y espacios
-                const nameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
-                if (!nameRegex.test(trimmed)) {
-                    return 'El nombre solo puede contener letras y espacios';
-                }
-
                 return null;
             }
         },
@@ -52,8 +46,8 @@ export default function CategoriaCrear() {
     return (
         <EntityCreateView<Categoria>
             entityType="categorias"
-            title="Crear Nueva Categoria"
-            subtitle="Completa la información de la categoria"
+            title="Crear Nueva Categoría"
+            subtitle="Completa la información de la categoría"
             fields={categoriaCreateFields}
             backPath="categorias"
         />

@@ -456,6 +456,7 @@ export function EntityEditView<T>({
             Cancelar
           </button>
           <button
+            id='editar-boton'
             type="submit"
             disabled={isUpdating || !hasChanges}
             className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue ${isUpdating || !hasChanges

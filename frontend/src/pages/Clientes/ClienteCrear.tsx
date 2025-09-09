@@ -26,12 +26,6 @@ export default function ClienteCrear() {
                     return 'El nombre debe tener al menos 3 caracteres';
                 }
 
-                // Validar que solo tenga letras y espacios
-                const nameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
-                if (!nameRegex.test(trimmed)) {
-                    return 'El nombre solo puede contener letras y espacios';
-                }
-
                 return null;
             }
         },

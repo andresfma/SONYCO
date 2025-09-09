@@ -64,6 +64,7 @@ export function ConfirmDeleteModal({
         {/* Actions */}
         <div className="flex justify-end space-x-3">
           <button
+            id="cancel-boton"
             type="button"
             onClick={onClose}
             disabled={isLoading}
@@ -72,6 +73,7 @@ export function ConfirmDeleteModal({
             Cancelar
           </button>
           <button
+            id="delete-boton"
             type="button"
             onClick={onConfirm}
             disabled={isLoading}

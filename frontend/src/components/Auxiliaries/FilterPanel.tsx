@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiSearch, FiX, FiFilter } from 'react-icons/fi';
-import type { UseFiltersReturn } from '../../hooks/useFilters';
+import type { UseFiltersReturn } from '../../hooks/Auxiliaries/useFilters';
 
 export interface FilterField {
   key: string;
@@ -95,6 +95,7 @@ export function FilterPanel({
               {field.type === 'text' ? (
                 <div className="relative">
                   <input
+                    id ={`filter-${field.key}`} 
                     type="text"
                     value={(filters[field.key] as string) || ''}
                     onChange={(e) => updateFilter(field.key, e.target.value)}
@@ -106,6 +107,7 @@ export function FilterPanel({
                 </div>
               ) : (
                 <select
+                  id ={`filter-select-${field.key}`} 
                   value={filters[field.key] !== undefined ? String(filters[field.key]) : ''}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -133,6 +135,7 @@ export function FilterPanel({
           {/* Botón de filtrar */}
           <div className="flex gap-2">
             <button
+              id='filter-boton'
               type="submit"
               className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                 hasUnappliedChanges
@@ -146,6 +149,7 @@ export function FilterPanel({
             
             {activeFilters.length > 0 && (
               <button
+                id='clear-filters-boton'
                 type="button"
                 onClick={clearAllFilters}
                 className="px-4 py-2 rounded-md text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors duration-200"

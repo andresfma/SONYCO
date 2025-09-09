@@ -347,6 +347,7 @@ export function EntityCreateView<T>({
             Cancelar
           </button>
           <button
+            id="crear-boton"
             type="submit"
             disabled={isCreating}
             className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue ${isCreating

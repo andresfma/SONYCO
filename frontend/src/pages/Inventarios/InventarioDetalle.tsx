@@ -80,7 +80,7 @@ export default function InventarioDetalle() {
         <EntityDetailView<Inventario>
             entityType='inventarios'
             entityId={id}
-            title='Detalle del inventario'
+            title='Detalle del Inventario'
             subtitle='Información completa del inventario seleccionado.'
             fields={inventarioFields}
             backPath='/inventarios'

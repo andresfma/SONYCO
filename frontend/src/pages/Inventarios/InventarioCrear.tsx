@@ -26,7 +26,7 @@ export default function InventarioCrear() {
       }
     },
     {
-      key: 'cantidad_minina',
+      key: 'cantidad_minima',
       label: 'Cantidad mínima',
       type: 'number',
       required: true,

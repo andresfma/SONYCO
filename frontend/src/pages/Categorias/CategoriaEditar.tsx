@@ -33,12 +33,6 @@ export default function CategoriaEditar() {
                     return 'El nombre debe tener al menos 3 caracteres';
                 }
 
-                // Validar que solo tenga letras y espacios (si no quieres números ni símbolos)
-                const nameRegex = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]+$/;
-                if (!nameRegex.test(trimmed)) {
-                    return 'El nombre solo puede contener letras y espacios';
-                }
-
                 return null;
             }
         },
@@ -60,8 +54,8 @@ export default function CategoriaEditar() {
         <EntityEditView<Categoria>
             entityType="categorias"
             entityId={id}
-            title="Editar Categoria"
-            subtitle="Modifica la información de la categoria."
+            title="Editar Categoría"
+            subtitle="Modifica la información de la categoría."
             fields={categoriaEditFields}
             backPath="/categorias"
             detailPath={`/categorias/${id}`}

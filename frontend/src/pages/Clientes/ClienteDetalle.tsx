@@ -181,7 +181,7 @@ export default function ClienteDetalle() {
         <EntityDetailView<Cliente>
             entityType='clientes'
             entityId={id}
-            title='Detalle del cliente'
+            title='Detalle del Cliente'
             subtitle='Información completa del cliente seleccionado.'
             fields={clientFields}
             backPath='/clientes'

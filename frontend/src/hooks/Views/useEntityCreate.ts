@@ -39,7 +39,7 @@ export const useEntityCreate = <T>({
       if (err.response?.status === 400) {
         setError(err.response?.data?.detail || 'Datos inválidos');
       } else if (err.response?.status === 409) {
-        setError('Ya existe un registro con estos datos');
+        setError(err.response?.data?.detail || 'Ya existe un registro con estos datos');
       } else {
         setError(`Error creando ${entityType.slice(0, -1)}`);
       }

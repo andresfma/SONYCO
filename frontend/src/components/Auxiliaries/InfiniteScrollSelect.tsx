@@ -120,6 +120,7 @@ export function InfiniteScrollSelect({
       <div className="relative" ref={dropdownRef}>
         {/* Input/Button */}
         <button
+          id="infinite-scroll-select-button"
           type="button"
           onClick={handleOpen}
           disabled={disabled}
@@ -181,6 +182,7 @@ export function InfiniteScrollSelect({
                 <>
                   {items.map((item) => (
                     <button
+                      id={`infinite-scroll-option-${item.id}`}
                       key={item.id}
                       type="button"
                       onClick={() => handleSelect(item)}

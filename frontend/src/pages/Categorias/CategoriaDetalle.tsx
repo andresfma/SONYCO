@@ -51,8 +51,8 @@ export default function CategoriaDetalle() {
         <EntityDetailView<Categoria>
             entityType='categorias'
             entityId={id}
-            title='Detalle de la categoria'
-            subtitle='Información completa de la categoria seleccionada.'
+            title='Detalle de la Categoría'
+            subtitle='Información completa de la categoría seleccionada.'
             fields={categoriaFields}
             backPath='/categorias'
             actions={actionButtons}

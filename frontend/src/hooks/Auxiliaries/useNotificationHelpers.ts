@@ -44,24 +44,43 @@ export const useNotificationHelpers = () => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
+  const entityArticles: Record<string, string> = {
+    venta: 'La',
+    categoria: 'La',
+  };
+
+  const entityDisplayNames: Record<string, string> = {
+    venta: 'Venta',
+    categoria: 'Categoría',
+  };
+
   const notifyEntityCreated = (entityName: string) => {
+    const article = entityArticles[entityName.toLowerCase()] || 'El';
+    const displayName = entityDisplayNames[entityName.toLowerCase()] || capitalizeFirst(entityName);
+
     notifySuccess(
-      `${capitalizeFirst(entityName)} creado`,
-      `El ${entityName.toLowerCase()} se ha creado exitosamente`
+      `${displayName} creado`,
+      `${article} ${displayName.toLowerCase()} se ha creado exitosamente`
     );
   };
 
   const notifyEntityUpdated = (entityName: string) => {
+    const article = entityArticles[entityName.toLowerCase()] || 'El';
+    const displayName = entityDisplayNames[entityName.toLowerCase()] || capitalizeFirst(entityName);
+
     notifySuccess(
-      `${capitalizeFirst(entityName)} actualizado`,
-      `El ${entityName.toLowerCase()} se ha actualizado exitosamente`
+      `${displayName} actualizado`,
+      `${article} ${displayName.toLowerCase()} se ha actualizado exitosamente`
     );
   };
 
   const notifyEntityDeleted = (entityName: string) => {
+    const article = entityArticles[entityName.toLowerCase()] || 'El';
+    const displayName = entityDisplayNames[entityName.toLowerCase()] || capitalizeFirst(entityName);
+
     notifySuccess(
-      `${capitalizeFirst(entityName)} eliminado`,
-      `El ${entityName.toLowerCase()} se ha eliminado exitosamente`
+      `${displayName} eliminado`,
+      `${article} ${displayName.toLowerCase()} se ha eliminado exitosamente`
     );
   };
 
