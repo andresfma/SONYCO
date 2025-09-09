@@ -1,0 +1,117 @@
+/// <reference types="cypress" />
+
+declare namespace Cypress {
+  interface Chainable {
+    /**
+     * Realiza login en la aplicación
+     */
+    login(): Chainable<void>
+
+    /**
+     * Abre la página de listado de una entidad (usuarios, productos, inventarios, etc.)
+     * @param entidad Nombre de la entidad en plural
+     */
+    abrirEntidad(entidad: string): Chainable<void>
+
+    /**
+     * Selecciona un botón de acción dentro de una fila de tabla
+     * @param filaIndex Índice de la fila (0 = primera)
+     * @param actionIndex Índice del botón de acción dentro de la última columna
+     */
+    seleccionarAccionFila(filaIndex: number, actionIndex: number): Chainable<JQuery<HTMLElement>>
+
+    /**
+     * Crea un usuario de prueba directamente vía API
+     * Devuelve el objeto usuario creado (incluyendo id, nombre, email, etc.)
+     */
+    crearUsuarioParaPruebas(): Chainable<{
+      id: number
+      nombre: string
+      email: string
+      rol_id: number
+      estado: boolean
+    }>
+
+    /**
+     * Crea un producto de prueba directamente vía API
+     * Devuelve el objeto producto creado (incluyendo id, nombre, email, etc.)
+     * @param estado Estado del producto (activo/inactivo), por defecto true (activo)
+     * @param categoria_id ID de la categoría a la que pertenece el producto, por defecto 1
+     */
+    crearProductoParaPruebas(estado?: boolean, categoria_id?: number): Chainable<{
+      id: number
+      codigo: string
+      nombre: string
+      descripcion: string
+      precio_unitario: number
+      unidad_medida: string
+      categoria_id: number
+      estado: boolean
+      categoria: { id: number; nombre: string}
+    }>
+
+    /**
+     * Crea un cliente de prueba directamente vía API
+     * Devuelve el objeto cliente creado (incluyendo id, nombre, email, etc.)
+     * @param estado Estado del cliente (activo/inactivo), por defecto true (activo)
+     */
+    crearClienteParaPruebas(estado?: boolean): Chainable<{
+      id: number
+      nombre: string
+      email: string
+      telefono: string
+      direccion: string
+      tipo_persona: string
+      identificacion: string
+      estado: boolean
+    }>
+
+    /**
+     * Crea una venta de prueba directamente vía API
+     * Devuelve el objeto venta creado (incluyendo id, cliente_id, total, etc.)
+     * @param estado Estado de la venta (activo/inactivo), por defecto true (activo)
+     * @param clienteId ID del cliente asociado a la venta, por defecto se crea un cliente nuevo
+     */
+    crearVentaParaPruebas(clienteId?: number, estado?: boolean): Chainable<{
+      id: number
+      cliente: { id: number; nombre: string}
+      usuario: { id: number; nombre: string}
+      total: number
+      estado: boolean
+      detalles: Array<{
+        id: number
+        producto: { id: number; nombre: string; codigo: string}
+        cantidad: number
+        precio_unitario: number
+      }>
+    }>
+
+    /**
+     * Crea una categoría de prueba directamente vía API
+     * Devuelve el objeto categoría creado (incluyendo id, nombre, etc.)
+     */
+    crearCategoriaParaPruebas(estado?: boolean): Chainable<{
+      id: number
+      nombre: string
+      descripcion: string
+      estado: boolean
+    }>
+
+
+    /** * Crea un inventario de prueba directamente vía API
+     * Devuelve el objeto inventario creado (incluyendo id, nombre, etc.)
+     * @param estado Estado del inventario (activo/inactivo), por defecto true (activo)
+     * @param producto_id ID del producto asociado al inventario
+     */
+    crearInventarioParaPruebas(estado?: boolean, producto_id?: number): Chainable<{
+      id: number
+      producto_id: number
+      cantidad: number
+      cantidad_minima: number
+      producto: { id: number; nombre: string; codigo: string}
+      estado: boolean
+    }>
+     
+  }
+}
+
