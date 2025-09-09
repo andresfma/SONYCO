@@ -106,7 +106,7 @@ Cypress.Commands.add('crearProductoParaPruebas', (estado = true, categoria_id=1)
 
 // Crear inventario para pruebas
 
-Cypress.Commands.add('crearInventarioParaPruebas', (estado = true, producto_id) => {
+Cypress.Commands.add('crearInventarioParaPruebas', (producto_id, estado = true, ) => {
   const randomId = Date.now()
   const inventarioPrueba = {
     producto_id: producto_id,
@@ -126,6 +126,30 @@ Cypress.Commands.add('crearInventarioParaPruebas', (estado = true, producto_id) 
     }).then((response) => {
       expect(response.status).to.eq(200)
       return response.body // devolver inventario creado
+    })
+  })
+})
+
+// Crear movimiento de inventario para pruebas
+
+Cypress.Commands.add('crearMovimientoParaPruebas', (producto_id, tipo = 'ENTRADA', cantidad = 20) => {
+  const inventarioPrueba = {
+    tipo: tipo,
+    producto_id: producto_id,
+    cantidad: cantidad
+  }
+
+  return cy.login().then((token) => {
+    return cy.request({
+      method: 'POST',
+      url: `${Cypress.env('apiUrl')}/inventarios/movimientos/${tipo.toLowerCase()}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: inventarioPrueba,
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      return response.body // devolver movimiento creado
     })
   })
 })
@@ -208,6 +232,31 @@ Cypress.Commands.add('crearVentaParaPruebas', (clienteId, estado = true) => {
   })
 })
 
+// Crear detalle de venta para pruebas
+
+Cypress.Commands.add('crearDetalleVentaParaPruebas', (ventaId, productoId, cantidad = 10) => {
+  const detalleVentaPrueba = {
+    producto_id: productoId,
+    cantidad: cantidad,
+    precio_unitario: 50000.0,
+  }
+
+  return cy.login().then((token) => {
+    return cy.request({
+      method: 'POST',
+      url: `${Cypress.env('apiUrl')}/detalle_venta/${ventaId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: detalleVentaPrueba,
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+      return response.body // devolver detalle de venta creado
+    })
+  })
+})
+
+// Seleccionar acción en fila de tabla (0=primera fila, 1=segunda fila, etc; 0=ver, 1=editar, 2=activar/desactivar, 3=eliminar)
 
 Cypress.Commands.add('seleccionarAccionFila', (filaIndex, actionIndex) => {
   return cy.get('table tbody tr')
@@ -216,6 +265,7 @@ Cypress.Commands.add('seleccionarAccionFila', (filaIndex, actionIndex) => {
     .eq(actionIndex).click()
 })
 
+// Navegar a una entidad desde el menú lateral y verificar que se cargó correctamente
 
 Cypress.Commands.add('abrirEntidad', (entidad) => {
   cy.get(`[href="/${entidad}"]`).click()
