@@ -1,5 +1,5 @@
 APP=app.main:app
-UVICORN=uvicorn $(APP) --reload
+UVICORN=uvicorn $(APP) --reload --host ::
 
 .PHONY: dev test prod unit-all init-db-dev init-db-test seed-dev seed-test db-dev db-test locust-sb locust-l locust-m locust-h server-test unit-categoria unit-cliente unit-exportar unit-inventario unit-producto unit-security unit-usuario unit-venta locust-debug locust-intro
 
