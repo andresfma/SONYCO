@@ -396,6 +396,7 @@ export function EntityEditView<T>({
       <div className='pb-2'>
         <div className="mb-2">
           <button
+            id='volver-boton'
             onClick={handleBack}
             className="text-blue hover:text-blue_hover font-medium transition-colors"
           >

@@ -186,7 +186,6 @@ export default function DetalleVentaCrear() {
     const commonProps = {
       id: field.key,
       value: value ?? '',
-      required: field.required,
       className: `mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue focus:ring-blue focus:ring-1 sm:text-sm text-gray-950 placeholder-gray-600 ${
         error ? 'border-red-300' : ''
       }`
