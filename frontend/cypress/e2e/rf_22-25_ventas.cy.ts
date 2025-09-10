@@ -67,7 +67,6 @@ describe('Gestión de Ventas', () => {
   })
 
   it('No debe crear una nueva venta con datos requeridos faltantes', () => {
-
     cy.abrirEntidad('ventas')  
     cy.contains('Nueva Venta').click()
 
@@ -140,7 +139,7 @@ describe('Gestión de Ventas', () => {
 
   it('No debe eliminar una venta con relaciones activas', () => {
     cy.crearCategoriaParaPruebas().then((categoria) => {
-        cy.crearProductoParaPruebas(true, categoria.id).then((producto) => {
+        cy.crearProductoParaPruebas(categoria.id).then((producto) => {
             cy.crearInventarioParaPruebas(producto.id).then((inventario) => {
                 cy.crearClienteParaPruebas().then((cliente) =>{
                     cy.crearVentaParaPruebas(cliente.id).then((venta) => {
@@ -169,7 +168,7 @@ describe('Gestión de Ventas', () => {
 
   it('Debe desactivar una venta activa', () => {
     cy.crearCategoriaParaPruebas().then((categoria) => {
-        cy.crearProductoParaPruebas(true, categoria.id).then((producto) => {
+        cy.crearProductoParaPruebas(categoria.id).then((producto) => {
             cy.crearInventarioParaPruebas(producto.id).then((inventario) => {
                 cy.crearClienteParaPruebas().then((cliente) =>{
                     cy.crearVentaParaPruebas(cliente.id).then((venta) => {

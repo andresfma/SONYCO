@@ -21,10 +21,12 @@ declare namespace Cypress {
     seleccionarAccionFila(filaIndex: number, actionIndex: number): Chainable<JQuery<HTMLElement>>
 
     /**
-     * Crea un usuario de prueba directamente vía API
-     * Devuelve el objeto usuario creado (incluyendo id, nombre, email, etc.)
+     * Crea un usuario de prueba directamente vía API.
+     * Devuelve el objeto usuario creado (incluyendo id, nombre, email, etc.)+
+     * @param estado Estado del usuario (activo/inactivo), por defecto true (activo)
+     * @param rolId  ID del rol (1: admin/ 2: no-admin), por defecto 2 (no-admin)
      */
-    crearUsuarioParaPruebas(): Chainable<{
+    crearUsuarioParaPruebas(rolId?: number, estado?: boolean): Chainable<{
       id: number
       nombre: string
       email: string
@@ -33,12 +35,12 @@ declare namespace Cypress {
     }>
 
     /**
-     * Crea un producto de prueba directamente vía API
+     * Crea un producto de prueba directamente vía API.
      * Devuelve el objeto producto creado (incluyendo id, nombre, email, etc.)
      * @param estado Estado del producto (activo/inactivo), por defecto true (activo)
-     * @param categoria_id ID de la categoría a la que pertenece el producto, por defecto 1
+     * @param categoriaId ID de la categoría a la que pertenece el producto
      */
-    crearProductoParaPruebas(estado?: boolean, categoria_id?: number): Chainable<{
+    crearProductoParaPruebas( categoriaId: number, estado?: boolean): Chainable<{
       id: number
       codigo: string
       nombre: string
@@ -51,7 +53,7 @@ declare namespace Cypress {
     }>
 
     /**
-     * Crea un cliente de prueba directamente vía API
+     * Crea un cliente de prueba directamente vía API.
      * Devuelve el objeto cliente creado (incluyendo id, nombre, email, etc.)
      * @param estado Estado del cliente (activo/inactivo), por defecto true (activo)
      */
@@ -67,7 +69,7 @@ declare namespace Cypress {
     }>
 
     /**
-     * Crea una venta de prueba directamente vía API
+     * Crea una venta de prueba directamente vía API.
      * Devuelve el objeto venta creado (incluyendo id, cliente_id, total, etc.)
      * @param estado Estado de la venta (activo/inactivo), por defecto true (activo)
      * @param clienteId ID del cliente asociado a la venta
@@ -87,7 +89,7 @@ declare namespace Cypress {
     }>
 
     /**
-     * Crea un detalle de venta de prueba directamente vía API
+     * Crea un detalle de venta de prueba directamente vía API.
      * Devuelve el objeto venta, asociado al detalle creado (incluyendo id, producto_id, cantidad, etc.)
      * @param ventaId ID de la venta a la que pertenece el detalle
      * @param productoId ID del producto asociado al detalle
@@ -109,7 +111,7 @@ declare namespace Cypress {
     }>
 
     /**
-     * Crea una categoría de prueba directamente vía API
+     * Crea una categoría de prueba directamente vía API.
      * Devuelve el objeto categoría creado (incluyendo id, nombre, etc.)
      * @param estado Estado de la categoría (activo/inactivo), por defecto true (activo)
      */
@@ -121,7 +123,7 @@ declare namespace Cypress {
     }>
 
 
-    /** * Crea un inventario de prueba directamente vía API
+    /** * Crea un inventario de prueba directamente vía API.
      * Devuelve el objeto inventario creado (incluyendo id, nombre, etc.)
      * @param estado Estado del inventario (activo/inactivo), por defecto true (activo)
      * @param producto_id ID del producto asociado al inventario
@@ -136,7 +138,7 @@ declare namespace Cypress {
     }>
 
     /**
-     * Crea un movimiento de inventario de prueba directamente vía API
+     * Crea un movimiento de inventario de prueba directamente vía API.
      * Devuelve el objeto movimiento creado (incluyendo id, tipo, cantidad, etc.)
      * @param tipo Tipo de movimiento ('entrada' o 'salida')
      * @param cantidad Cantidad del movimiento
@@ -149,6 +151,12 @@ declare namespace Cypress {
       cantidad: number
       fecha: string
     }>
+
+    /**
+     * Exporta una entidad y valida que la descarga sea exitosa.
+     * @param entidad Nombre de la entidad (ej: 'clientes', 'productos')
+     */
+    exportarEntidad(entidad: string): Chainable<void>
      
   }
 }

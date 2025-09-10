@@ -30,7 +30,6 @@ describe('Gestión de Categorías', () => {
 
   // CREATE: RF_18
   it('Debe crear una nueva categoria con datos válidos', () => {
-
     const randomId = Date.now()
     const nombre = `Categoria Test CY ${randomId}`
 
@@ -58,7 +57,7 @@ describe('Gestión de Categorías', () => {
         cy.contains('Nueva Categoría').click()
 
         // Rellenar formulario
-        cy.get('#nombre').type(categoria.nombre)
+        cy.get('#nombre').type(categoria.nombre) // nombre duplicado
         cy.get('#estado').select('Activo')
         cy.get('#descripcion').type('Descripción de la categoría nueva')
 
@@ -68,7 +67,6 @@ describe('Gestión de Categorías', () => {
         // Validar mensaje de error por código duplicado
         cy.contains('Error al crear').should('be.visible')
         cy.contains('Ya existe una categoría con el nombre').should('be.visible')
-
     })
   })
 
@@ -88,37 +86,48 @@ describe('Gestión de Categorías', () => {
 
   // EDIT: RF_19
   it('Debe editar correctamente una categoria existente', () => {
-    const randomId = Date.now()
-    const nombre = `Categoria Editada CY ${randomId}`
+    cy.crearCategoriaParaPruebas().then((categoria) => {
+      const randomId = Date.now()
+      const nombre = `Categoria Editada CY ${randomId}`
 
-    cy.abrirEntidad('categorias')
+      cy.abrirEntidad('categorias')
 
-    // Seleccionar tercer categoria para editar
-    cy.seleccionarAccionFila(2,1)
-    cy.contains('Editar Categoría').should('be.visible')
-    
-    // Rellenar formulario
-    cy.get('#nombre').clear().type(nombre)
-    cy.get('#estado').select('Activo')
-    cy.get('#descripcion').clear().type('Descripción de la categoría editada')
+      // Filtrar por cliente recién creado
+      cy.get('#filter-search').type(categoria.nombre)
+      cy.get('#filter-boton').click()
 
-    cy.get('#editar-boton').click()
+      // Seleccionar tercer categoria para editar
+      cy.seleccionarAccionFila(0,1)
+      cy.contains('Editar Categoría').should('be.visible')
+      
+      // Rellenar formulario
+      cy.get('#nombre').clear().type(nombre)
+      cy.get('#estado').select('Activo')
+      cy.get('#descripcion').clear().type('Descripción de la categoría editada')
 
-    // Verificar redirección al detalle del usuario actualizado
-    cy.url().should('match', /\/categorias\/\d+$/)
-    cy.contains('Detalle de la Categoría').should('be.visible')
+      cy.get('#editar-boton').click()
+
+      // Verificar redirección al detalle del usuario actualizado
+      cy.url().should('match', /\/categorias\/\d+$/)
+      cy.contains('Detalle de la Categoría').should('be.visible')
+    })
   })
 
   it('No debe permitir editar una categoria con nombre ya existente', () => {
     cy.crearCategoriaParaPruebas().then((categoria) => {
+      cy.crearCategoriaParaPruebas().then((categoria_editar) => {
         cy.abrirEntidad('categorias')
 
+        // Filtrar por cliente recién creado
+        cy.get('#filter-search').type(categoria.nombre)
+        cy.get('#filter-boton').click()
+
         // Seleccionar tercer categoria para editar
-        cy.seleccionarAccionFila(2,1)
+        cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Categoría').should('be.visible')
 
         // Rellenar formulario
-        cy.get('#nombre').clear().type(categoria.nombre) // Nombre duplicado
+        cy.get('#nombre').clear().type(categoria_editar.nombre) // Nombre duplicado
         cy.get('#estado').select('Activo')
         cy.get('#descripcion').clear().type('Descripción de la categoría editada')
         
@@ -128,13 +137,12 @@ describe('Gestión de Categorías', () => {
         // Validar mensaje de error por código duplicado
         cy.contains('Error al actualizar').should('be.visible')
         cy.contains('Ya existe una categoría con ese nombre').should('be.visible')
-
+      })
     })
   })
 
   // DELETE: RF_20
   it('Debe eliminar una categoria sin relaciones activas', () => {
-
     cy.crearCategoriaParaPruebas().then((categoria) => {
         cy.abrirEntidad('categorias')  
 
@@ -154,7 +162,7 @@ describe('Gestión de Categorías', () => {
 
   it('No debe eliminar una categoria con relaciones activas', () => {
     cy.crearCategoriaParaPruebas().then((categoria) => {
-        cy.crearProductoParaPruebas(true, categoria.id).then(() => {
+        cy.crearProductoParaPruebas(categoria.id).then(() => {
         cy.abrirEntidad('categorias')
 
         // Filtrar por categoria recién creado
@@ -169,8 +177,8 @@ describe('Gestión de Categorías', () => {
         cy.url().should('include', '/categorias')
         cy.contains('tiene relaciones activas').should('be.visible')
         cy.contains('Se recomienda desactivar').should('be.visible')
+      })
     })
-  })
   })
 
   it('Debe desactivar un categoria activa', () => {
@@ -188,34 +196,46 @@ describe('Gestión de Categorías', () => {
         cy.contains('Estado actualizado').should('be.visible')
         cy.contains('ahora está inactiva').should('be.visible')
     })
-
   })
 
   // Validación de vistas lista, detalle, creación y edición
 
   it('Debe navegar correctamente entre vistas de categorias', () => {
-    cy.abrirEntidad('categorias')
+      cy.crearCategoriaParaPruebas().then((categoria) => {
+      cy.abrirEntidad('categorias')
 
-    // Navegar a creación
-    cy.contains('Nueva Categoría').click()
-    cy.contains('Crear Nueva Categoría').should('be.visible')
-    cy.url().should('include', '/categorias/crear')
+      // Navegar a creación
+      cy.contains('Nueva Categoría').click()
+      cy.contains('Crear Nueva Categoría').should('be.visible')
+      cy.url().should('include', '/categorias/crear')
 
-    // Volver a lista
-    cy.abrirEntidad('categorias')
+      // Volver a lista
+      cy.abrirEntidad('categorias')
 
-    // Navegar a detalle de la primera categoria
-    cy.seleccionarAccionFila(0,0)
-    cy.contains('Detalle de la Categoría').should('be.visible')
-    cy.url().should('match', /\/categorias\/\d+$/)
+      // Vista detalle
 
-    // Volver a lista
-    cy.abrirEntidad('categorias')
+      // Filtrar por cliente recién creado
+      cy.get('#filter-search').type(categoria.nombre)
+      cy.get('#filter-boton').click()
 
-    // Navegar a edición del primer categoria
-    cy.seleccionarAccionFila(0,1)
-    cy.contains('Editar Categoría').should('be.visible')
-    cy.url().should('match', /\/categorias\/\d+\/editar$/)
+      // Navegar a detalle de la primera categoria
+      cy.seleccionarAccionFila(0,0)
+      cy.contains('Detalle de la Categoría').should('be.visible')
+      cy.url().should('match', /\/categorias\/\d+$/)
 
+      // Volver a lista
+      cy.abrirEntidad('categorias')
+
+      // Vista editar
+
+      // Filtrar por cliente recién creado
+      cy.get('#filter-search').type(categoria.nombre)
+      cy.get('#filter-boton').click()
+
+      // Navegar a edición del primer categoria
+      cy.seleccionarAccionFila(0,1)
+      cy.contains('Editar Categoría').should('be.visible')
+      cy.url().should('match', /\/categorias\/\d+\/editar$/)
+    })
   })
 })

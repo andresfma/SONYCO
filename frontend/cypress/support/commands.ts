@@ -50,13 +50,13 @@ Cypress.Commands.add('login', () => {
 
 // Crear usuario para pruebas
 
-Cypress.Commands.add('crearUsuarioParaPruebas', () => {
+Cypress.Commands.add('crearUsuarioParaPruebas', (rolId = 2, estado = true) => {
   const randomId = Date.now()
   const usuarioPrueba = {
     nombre: `Usuario Test ${randomId}`,
     email: `usuario${randomId}@test.com`,
-    rol_id: 2,
-    estado: true,
+    rol_id: rolId,
+    estado: estado,
     contrasena: 'Aa12345678'
   }
 
@@ -65,7 +65,7 @@ Cypress.Commands.add('crearUsuarioParaPruebas', () => {
       method: 'POST',
       url: `${Cypress.env('apiUrl')}/usuarios/`,
       headers: {
-        Authorization: `Bearer ${token}`, // ahora con token admin
+        Authorization: `Bearer ${token}`, // con token admin
       },
       body: usuarioPrueba,
     }).then((response) => {
@@ -77,7 +77,7 @@ Cypress.Commands.add('crearUsuarioParaPruebas', () => {
 
 // Crear producto para pruebas
 
-Cypress.Commands.add('crearProductoParaPruebas', (estado = true, categoria_id=1) => {
+Cypress.Commands.add('crearProductoParaPruebas', (categoriaId, estado = true) => {
   const randomId = Date.now()
   const productoPrueba = {
     codigo: 'Y' + randomId,
@@ -85,7 +85,7 @@ Cypress.Commands.add('crearProductoParaPruebas', (estado = true, categoria_id=1)
     descripcion: `Descripción del producto test ${randomId}`,
     precio_unitario: 50000.0,
     unidad_medida: 'Unidad',
-    categoria_id: categoria_id,
+    categoria_id: categoriaId,
     estado: estado
   }
 
@@ -279,6 +279,25 @@ Cypress.Commands.add('abrirEntidad', (entidad) => {
   }
 
   cy.contains(textoEsperado).should('be.visible')
+})
+
+// Exportar reporte de una entidad
+
+Cypress.Commands.add('exportarEntidad', (entidad: string) => {
+  // Abrir la entidad en el sistema
+  cy.abrirEntidad(entidad)
+
+  // Interceptar petición de exportación
+  cy.intercept('GET', `${Cypress.env('apiUrl')}/exportar/**`).as('descargaReporte')
+
+  // Hacer click en el botón Exportar
+  cy.contains('Exportar').click()
+
+  // Verificar notificación de éxito
+  cy.contains('El archivo se ha descargado correctamente').should('exist')
+
+  // Validar que la respuesta fue correcta
+  cy.wait('@descargaReporte').its('response.statusCode').should('eq', 200)
 })
 
 

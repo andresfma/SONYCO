@@ -85,7 +85,7 @@ describe('Gestión de Clientes', () => {
 
         // Rellenar formulario
         cy.get('#nombre').type('Otro Cliente')
-        cy.get('#email').type(cliente.email)
+        cy.get('#email').type(cliente.email) // email duplicado
         cy.get('#telefono').type('0987654321')
         cy.get('#direccion').type('Calle Falsa 123')
         cy.get('#tipo_persona').select('Jurídica')
@@ -119,7 +119,7 @@ describe('Gestión de Clientes', () => {
         cy.get('#direccion').type('Calle Falsa 123')
         cy.get('#tipo_persona').select('Jurídica')
         cy.get('#estado').select('Activo')
-        cy.get('#identificacion').type(cliente.identificacion)
+        cy.get('#identificacion').type(cliente.identificacion) // identificación duplicada
 
         // Guardar cliente
         cy.get('#crear-boton').click()
@@ -151,45 +151,58 @@ describe('Gestión de Clientes', () => {
 
   // EDIT: RF_15
   it('Debe editar correctamente un cliente existente', () => {
-    const randomId = Date.now()
-    const email = `cliente${randomId}@test.com`
-    const identificacion = `E-${randomId}`
+    cy.crearClienteParaPruebas().then((cliente) => {
+      const randomId = Date.now()
+      const email = `cliente${randomId}@test.com`
+      const identificacion = `E-${randomId}`
 
-    cy.abrirEntidad('clientes')
+      cy.abrirEntidad('clientes')
 
-    // Seleccionar tercer cliente para editar
-    cy.seleccionarAccionFila(2,1)
-    cy.contains('Editar Cliente').should('be.visible')
-    
-    // Rellenar formulario
-    cy.get('#nombre').clear().type('Cliente Editado CY')
-    cy.get('#email').clear().type(email)
-    cy.get('#telefono').clear().type('1122334455')
-    cy.get('#direccion').clear().type('Avenida 123')
-    cy.get('#tipo_persona').select('Jurídica')
-    cy.get('#estado').select('Activo')
-    cy.get('#identificacion').clear().type(identificacion)
+      // Filtrar por producto recién creado
+      cy.get('#filter-search').type(cliente.identificacion)
+      cy.get('#filter-boton').click()
 
-    cy.get('#editar-boton').click()
 
-    // Verificar redirección al detalle del usuario actualizado
-    cy.url().should('match', /\/clientes\/\d+$/)
-    cy.contains('Detalle del Cliente').should('be.visible')
+      // Seleccionar tercer cliente para editar
+      cy.seleccionarAccionFila(0,1)
+      cy.contains('Editar Cliente').should('be.visible')
+      
+      // Rellenar formulario
+      cy.get('#nombre').clear().type('Cliente Editado CY')
+      cy.get('#email').clear().type(email)
+      cy.get('#telefono').clear().type('1122334455')
+      cy.get('#direccion').clear().type('Avenida 123')
+      cy.get('#tipo_persona').select('Jurídica')
+      cy.get('#estado').select('Activo')
+      cy.get('#identificacion').clear().type(identificacion)
+
+      cy.get('#editar-boton').click()
+
+      // Verificar redirección al detalle del usuario actualizado
+      cy.url().should('match', /\/clientes\/\d+$/)
+      cy.contains('Detalle del Cliente').should('be.visible')
+    })
+
   })
 
   it('No debe permitir editar un cliente con email ya existente', () => {
     cy.crearClienteParaPruebas().then((cliente) => {
+      cy.crearClienteParaPruebas().then((cliente_editar) => {
         const randomId = Date.now()
         const identificacion = `E-${randomId}`
         cy.abrirEntidad('clientes')
 
+        // Filtrar por cliente recién creado
+        cy.get('#filter-search').type(cliente.identificacion)
+        cy.get('#filter-boton').click()
+
         // Seleccionar tercer cliente para editar
-        cy.seleccionarAccionFila(2,1)
+        cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Cliente').should('be.visible')
 
         // Rellenar formulario
         cy.get('#nombre').clear().type('Cliente Editado CY')
-        cy.get('#email').clear().type(cliente.email) // Email duplicado
+        cy.get('#email').clear().type(cliente_editar.email) // Email duplicado
         cy.get('#telefono').clear().type('1122334455')
         cy.get('#direccion').clear().type('Avenida 123')
         cy.get('#tipo_persona').select('Jurídica')
@@ -202,18 +215,23 @@ describe('Gestión de Clientes', () => {
         // Validar mensaje de error por código duplicado
         cy.contains('Error al actualizar').should('be.visible')
         cy.contains('Ya existe').should('be.visible')
-
+      })
     })
   })
 
   it('No debe permitir editar un cliente con identificación ya existente', () => {
     cy.crearClienteParaPruebas().then((cliente) => {
+      cy.crearClienteParaPruebas().then((cliente_editar) => {
         const randomId = Date.now()
         const email = `cliente${randomId}@test.com`
         cy.abrirEntidad('clientes')
 
+        // Filtrar por cliente recién creado
+        cy.get('#filter-search').type(cliente.identificacion)
+        cy.get('#filter-boton').click()
+
         // Seleccionar tercer cliente para editar
-        cy.seleccionarAccionFila(2,1)
+        cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Cliente').should('be.visible')
 
         // Rellenar formulario
@@ -223,7 +241,7 @@ describe('Gestión de Clientes', () => {
         cy.get('#direccion').clear().type('Avenida 123')
         cy.get('#tipo_persona').select('Jurídica')
         cy.get('#estado').select('Activo')
-        cy.get('#identificacion').clear().type(cliente.identificacion) // Identificación duplicada
+        cy.get('#identificacion').clear().type(cliente_editar.identificacion) // Identificación duplicada
 
         // Guardar cliente
         cy.get('#editar-boton').click()
@@ -231,13 +249,12 @@ describe('Gestión de Clientes', () => {
         // Validar mensaje de error por código duplicado
         cy.contains('Error al actualizar').should('be.visible')
         cy.contains('Ya existe').should('be.visible')
-
+      })
     })
   })
 
   // DELETE: RF_16
   it('Debe eliminar un cliente sin relaciones activas', () => {
-
     cy.crearClienteParaPruebas().then((cliente) => {
         cy.abrirEntidad('clientes')  
 
@@ -257,7 +274,7 @@ describe('Gestión de Clientes', () => {
 
   it('No debe eliminar un cliente con relaciones activas', () => {
     cy.crearClienteParaPruebas().then((cliente) => {
-        cy.crearVentaParaPruebas(cliente.id).then(() => {
+      cy.crearVentaParaPruebas(cliente.id).then(() => {
         cy.abrirEntidad('clientes')
 
         // Filtrar por cliente recién creado
@@ -272,8 +289,8 @@ describe('Gestión de Clientes', () => {
         cy.url().should('include', '/clientes')
         cy.contains('tiene relaciones activas').should('be.visible')
         cy.contains('Se recomienda desactivar').should('be.visible')
+      })
     })
-  })
   })
 
   it('Debe desactivar un cliente activo', () => {
@@ -291,34 +308,46 @@ describe('Gestión de Clientes', () => {
         cy.contains('Estado actualizado').should('be.visible')
         cy.contains('ahora está inactivo').should('be.visible')
     })
-
   })
 
   // Validación de vistas lista, detalle, creación y edición
 
   it('Debe navegar correctamente entre vistas de clientes', () => {
-    cy.abrirEntidad('clientes')
+    cy.crearClienteParaPruebas().then((cliente) => {
+      cy.abrirEntidad('clientes')
 
-    // Navegar a creación
-    cy.contains('Nuevo Cliente').click()
-    cy.contains('Crear Nuevo Cliente').should('be.visible')
-    cy.url().should('include', '/clientes/crear')
+      // Navegar a creación
+      cy.contains('Nuevo Cliente').click()
+      cy.contains('Crear Nuevo Cliente').should('be.visible')
+      cy.url().should('include', '/clientes/crear')
 
-    // Volver a lista
-    cy.abrirEntidad('clientes')
+      // Volver a lista
+      cy.abrirEntidad('clientes')
 
-    // Navegar a detalle del primer cliente
-    cy.seleccionarAccionFila(0,0)
-    cy.contains('Detalle del Cliente').should('be.visible')
-    cy.url().should('match', /\/clientes\/\d+$/)
+      // Vista detalle
 
-    // Volver a lista
-    cy.abrirEntidad('clientes')
+      // Filtrar por cliente recién creado
+      cy.get('#filter-search').type(cliente.identificacion)
+      cy.get('#filter-boton').click()
 
-    // Navegar a edición del primer cliente
-    cy.seleccionarAccionFila(0,1)
-    cy.contains('Editar Cliente').should('be.visible')
-    cy.url().should('match', /\/clientes\/\d+\/editar$/)
+      // Navegar a detalle del primer cliente
+      cy.seleccionarAccionFila(0,0)
+      cy.contains('Detalle del Cliente').should('be.visible')
+      cy.url().should('match', /\/clientes\/\d+$/)
 
+      // Volver a lista
+      cy.abrirEntidad('clientes')
+
+      // Vista editar
+
+      // Filtrar por cliente recién creado
+      cy.get('#filter-search').type(cliente.identificacion)
+      cy.get('#filter-boton').click()
+
+      // Navegar a edición del primer cliente
+      cy.seleccionarAccionFila(0,1)
+      cy.contains('Editar Cliente').should('be.visible')
+      cy.url().should('match', /\/clientes\/\d+\/editar$/)
+    })
   })
 })

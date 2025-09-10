@@ -7,7 +7,7 @@ describe('Login', () => {
     cy.get('#password').type('admin')
     cy.contains('Siguiente').click()
 
-    // validaciones de que el backend respondió bien
+    // Validaciones de inicio de sesión
     cy.url().should('include', '/dashboard')
     cy.contains('Bienvenido')
   })

@@ -5,30 +5,31 @@ describe('Gestión de usuarios y roles', () => {
   })
 
   // READ
-  it.only('Debe listar usuarios y permitir filtrado', () => {
-    cy.abrirEntidad('usuarios')  
+  it('Debe listar usuarios y permitir filtrado', () => {
+    cy.crearUsuarioParaPruebas(2, false).then((usuario) => { // usuario no-admin con estado inactivo
+      cy.abrirEntidad('usuarios')  
 
-    // Filtrar por nombre de usuario "Admin"
-    cy.get('#filter-search').type('Admin')
-    cy.get('#filter-boton').click()
-    cy.contains('admin@admin.com').should('be.visible')
+      // Filtrar por nombre de usuario recién creado
+      cy.get('#filter-search').type(usuario.nombre)
+      cy.get('#filter-boton').click()
+      cy.contains(usuario.email).should('be.visible')
 
-    // Filtrar por email de usuario "Admin"
-    cy.get('#filter-search').clear().type('admin@admin.com')
-    cy.get('#filter-boton').click()
-    cy.contains('admin@admin.com').should('be.visible')
-    cy.contains('Mostrando 1-1').should('be.visible')
+      // Filtrar por email de usuario recién creado
+      cy.get('#filter-search').clear().type(usuario.email)
+      cy.get('#filter-boton').click()
+      cy.contains(usuario.nombre).should('be.visible')
 
-    //Filtrar por estado
-    cy.get('#filter-search').clear()
-    cy.get('#filter-select-estado').select('Inactivo')
-    cy.get('#filter-boton').click()
-    cy.contains('Inactivo').should('be.visible')
+      //Filtrar por estado
+      cy.get('#filter-search').clear()
+      cy.get('#filter-select-estado').select('Inactivo')
+      cy.get('#filter-boton').click()
+      cy.contains(usuario.nombre).should('be.visible')
 
-    // Limpiar filtros y verificar lista completa
-    cy.get('#clear-filters-boton').click()
-    cy.get('#filter-search').should('have.value', '')
-    cy.contains('Mostrando 1-10').should('be.visible')
+      // Limpiar filtros y verificar lista completa
+      cy.get('#clear-filters-boton').click()
+      cy.get('#filter-search').should('have.value', '')
+      cy.contains('Mostrando 1-10').should('be.visible')
+      })
   })
 
   // CREATE
@@ -54,22 +55,22 @@ describe('Gestión de usuarios y roles', () => {
   })
 
   it('No debe crear un usuario con correo ya existente', () => {
-    const nombreUsuario = `Usuario Nuevo CY`
+    cy.crearUsuarioParaPruebas().then((usuario) => {
+      cy.abrirEntidad('usuarios')  
+      cy.contains('Nuevo Usuario').click()
 
-    cy.abrirEntidad('usuarios')  
-    cy.contains('Nuevo Usuario').click()
+      cy.get('#nombre').type('Usuario con correo duplicado')
+      cy.get('#email').type(usuario.email)
+      cy.get('#rol_id').select('Usuario')
+      cy.get('#contrasena').type('Aa12345678')
+      cy.get('#confirmar_contrasena').type('Aa12345678')
 
-    cy.get('#nombre').type(nombreUsuario)
-    cy.get('#email').type('admin@admin.com')
-    cy.get('#rol_id').select('Usuario')
-    cy.get('#contrasena').type('Aa12345678')
-    cy.get('#confirmar_contrasena').type('Aa12345678')
+      cy.get('#crear-boton').click()
 
-    cy.get('#crear-boton').click()
-
-    // Validar mensaje de error por correo duplicado
-    cy.contains('Error al crear').should('be.visible')
-    cy.contains('ya existe').should('be.visible')
+      // Validar mensaje de error por correo duplicado
+      cy.contains('Error al crear').should('be.visible')
+      cy.contains('ya existe').should('be.visible')
+    })
   })
 
   it('No debe crear un nuevo usuario con datos requeridos faltantes', () => {
@@ -92,12 +93,11 @@ describe('Gestión de usuarios y roles', () => {
 
   // DELETE
   it('Debe eliminar un usuario sin relaciones activas', () => {
-
     cy.crearUsuarioParaPruebas().then((usuario) => {
         cy.abrirEntidad('usuarios')  
 
         // Filtrar por usuario recién creado
-        cy.get('#filter-search').type(usuario.nombre)
+        cy.get('#filter-search').type(usuario.email)
         cy.get('#filter-boton').click()
 
         // Ejecutar acción de eliminar en la primera fila
@@ -110,8 +110,13 @@ describe('Gestión de usuarios y roles', () => {
     })
   })
 
-  it('No debe eliminar un usuario con relaciones activas', () => {
-    cy.abrirEntidad('usuarios')  
+  it('No debe eliminar un usuario con relaciones activas', () => { // se usa usuario admin
+    cy.abrirEntidad('usuarios') 
+
+    // Filtrar por usuario admin
+    cy.get('#filter-search').type('Admin')
+    cy.get('#filter-boton').click()
+    cy.contains('admin@admin.com').should('be.visible')
 
     // Intentar eliminar el primer usuario con relaciones
     cy.seleccionarAccionFila(0,3)
@@ -122,52 +127,128 @@ describe('Gestión de usuarios y roles', () => {
     cy.contains('tiene relaciones activas').should('be.visible')
   })
 
+  it('Debe desactivar un usuario activo', () => {
+    cy.crearUsuarioParaPruebas().then((usuario) => {
+        cy.abrirEntidad('usuarios')  
+
+        // Filtrar por producto recién creado
+        cy.get('#filter-search').type(usuario.email)
+        cy.get('#filter-boton').click()
+
+        // Opción de desactivar
+        cy.seleccionarAccionFila(0,2)
+
+        // Validar desactivación exitosa
+        cy.contains('Estado actualizado').should('be.visible')
+        cy.contains('ahora está inactivo').should('be.visible')
+    })
+
+  })
+
   // EDIT
   it('Debe editar correctamente un usuario existente', () => {
-    const randomId = Date.now()
-    const nombreUsuario = `Usuario Editado CY`
-    const emailUsuario = `usuario${randomId}@test.com`
+    cy.crearUsuarioParaPruebas().then((usuario) => {
+      const randomId = Date.now()
+      const nombreUsuario = `Usuario Editado CY`
+      const emailUsuario = `usuario${randomId}@test.com`
 
-    cy.abrirEntidad('usuarios')  
+      cy.abrirEntidad('usuarios') 
 
-    // Seleccionar tercer usuario para editar
-    cy.seleccionarAccionFila(2,1)
+      // Filtrar por usuario admin
+      cy.get('#filter-search').type(usuario.email)
+      cy.get('#filter-boton').click()
+      cy.contains(usuario.nombre).should('be.visible')
 
-    cy.contains('Editar Usuario').should('be.visible')
-    cy.get('#nombre').clear().type(nombreUsuario)
-    cy.get('#email').clear().type(emailUsuario)
-    cy.get('#estado').select('Inactivo')
-    cy.get('#rol_id').select('Admin')
-    cy.get('#contrasena').clear().type('12345678aA')
-    cy.get('#confirmar_contrasena').clear().type('12345678aA')
+      // Seleccionar opción editar para el usuario recién creado
+      cy.seleccionarAccionFila(0,1)
 
-    cy.get('#editar-boton').click()
+      cy.contains('Editar Usuario').should('be.visible')
+      cy.get('#nombre').clear().type(nombreUsuario)
+      cy.get('#email').clear().type(emailUsuario)
+      cy.get('#estado').select('Inactivo')
+      cy.get('#rol_id').select('Usuario')
+      cy.get('#contrasena').clear().type('12345678aA')
+      cy.get('#confirmar_contrasena').clear().type('12345678aA')
 
-    // Verificar redirección al detalle del usuario actualizado
-    cy.url().should('match', /\/usuarios\/\d+$/)
-    cy.contains('Detalle del Usuario').should('be.visible')
+      cy.get('#editar-boton').click()
+
+      // Verificar redirección al detalle del usuario actualizado
+      cy.url().should('match', /\/usuarios\/\d+$/)
+      cy.contains('Detalle del Usuario').should('be.visible')
+    })
   })
 
   it('No debe permitir editar un usuario con correo ya existente', () => {
-    const nombreUsuario = `Usuario Editado CY`
-    const emailUsuario = `admin@admin.com`
+    cy.crearUsuarioParaPruebas().then((usuario) => {
+      cy.crearUsuarioParaPruebas().then((usuario_editar) => { // usuario con correo ya existente
+        const nombreUsuario = `Usuario Editado CY`
 
-    cy.abrirEntidad('usuarios')  
+        cy.abrirEntidad('usuarios')  
 
-    // Seleccionar tercer usuario para editar
-    cy.seleccionarAccionFila(2,1)
+        // Filtrar por usuario admin
+        cy.get('#filter-search').type(usuario.email)
+        cy.get('#filter-boton').click()
+        cy.contains(usuario.nombre).should('be.visible')
 
-    cy.get('#nombre').clear().type(nombreUsuario)
-    cy.get('#email').clear().type(emailUsuario)
-    cy.get('#estado').select('Inactivo')
-    cy.get('#rol_id').select('Admin')
-    cy.get('#contrasena').clear().type('12345678aA')
-    cy.get('#confirmar_contrasena').clear().type('12345678aA')
+        // Seleccionar opción editar del usuario recién creado
+        cy.seleccionarAccionFila(0,1)
 
-    cy.get('#editar-boton').click()
+        cy.get('#nombre').clear().type(nombreUsuario)
+        cy.get('#email').clear().type(usuario_editar.email) // correo existente
+        cy.get('#estado').select('Inactivo')
+        cy.get('#rol_id').select('Usuario')
+        cy.get('#contrasena').clear().type('12345678aA')
+        cy.get('#confirmar_contrasena').clear().type('12345678aA')
 
-    // Validar mensaje de error por correo duplicado
-    cy.contains('Error al actualizar').should('be.visible')
-    cy.contains('ya existe').should('be.visible')
+        cy.get('#editar-boton').click()
+
+        // Validar mensaje de error por correo duplicado
+        cy.contains('Error al actualizar').should('be.visible')
+        cy.contains('ya existe').should('be.visible')
+      })
+    })
+  })
+
+  // Validación de vistas lista, detalle, creación y edición
+
+  it('Debe navegar correctamente entre vistas de usuarios', () => {
+    cy.crearUsuarioParaPruebas().then((usuario) => {
+      cy.abrirEntidad('usuarios')
+
+      // Vista crear
+      cy.contains('Nuevo Usuario').click()
+      cy.contains('Crear Nuevo Usuario').should('be.visible')
+      cy.url().should('include', '/usuarios/crear')
+
+      // Volver a lista
+      cy.abrirEntidad('usuarios')
+
+      // Vista detalles
+      
+      // Filtrar por usuario recién creado
+      cy.get('#filter-search').type(usuario.email)
+      cy.get('#filter-boton').click()
+      cy.contains(usuario.nombre).should('be.visible')
+
+      // Navegar a detalle del primer producto
+      cy.seleccionarAccionFila(0,0)
+      cy.contains('Detalle del Usuario').should('be.visible')
+      cy.url().should('match', /\/usuarios\/\d+$/)
+
+      // Volver a lista
+      cy.abrirEntidad('usuarios')
+
+      // Vista editar
+
+      // Filtrar por usuario recién creado
+      cy.get('#filter-search').type(usuario.nombre)
+      cy.get('#filter-boton').click()
+      cy.contains(usuario.email).should('be.visible')
+
+      // Navegar a edición del usuario recién creado
+      cy.seleccionarAccionFila(0,1)
+      cy.contains('Editar Usuario').should('be.visible')
+      cy.url().should('match', /\/usuarios\/\d+\/editar$/)
+    })
   })
 })
