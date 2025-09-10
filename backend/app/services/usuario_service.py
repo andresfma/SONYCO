@@ -109,7 +109,8 @@ def create_usuario(db: Session, usuario: UsuarioCreate) -> Usuario:
         nombre=usuario.nombre,
         email=usuario.email,
         contrasena=hashed_password,
-        rol_id=usuario.rol_id
+        rol_id=usuario.rol_id,
+        estado=usuario.estado
     )
 
     db.add(nuevo_usuario)
