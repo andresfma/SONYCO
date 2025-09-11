@@ -259,7 +259,7 @@ describe('Gestión de Clientes', () => {
 
               // Limpiar filtro y filtrar por id de movimiento de salida
               cy.get('#clear-filters-boton').click()
-              cy.get('#filter-search').clear().type(String(salida.id))
+              cy.typeSafe('#filter-search', String(salida.id))
               cy.get('#filter-boton').click()
               cy.contains(producto.nombre).should('be.visible')
               cy.contains('SALIDA').should('be.visible')

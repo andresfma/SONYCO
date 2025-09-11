@@ -157,7 +157,23 @@ declare namespace Cypress {
      * @param entidad Nombre de la entidad (ej: 'clientes', 'productos')
      */
     exportarEntidad(entidad: string): Chainable<void>
-     
+
+    /**
+     * Aplica clear() de manera segura a un input.
+     * Espera visibilidad y que no esté deshabilitado.
+     * @param selector Selector del input (ej: '#cantidad')
+     */
+    clearSafe(selector: string): Chainable<JQuery<HTMLElement>>;
+
+    /**
+     * Limpia y escribe texto en un input de forma segura.
+     * Re-evalúa el DOM entre clear() y type() para evitar problemas
+     * de re-renderizado en frameworks como React o Vue.
+     * @param selector Selector del input (ej: '#cantidad')
+     * @param text Texto a escribir
+     */
+    typeSafe(selector: string, text: string): Chainable<JQuery<HTMLElement>>;
+
   }
 }
 

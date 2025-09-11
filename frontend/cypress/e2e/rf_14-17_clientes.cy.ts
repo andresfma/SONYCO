@@ -15,17 +15,17 @@ describe('Gestión de Clientes', () => {
         cy.contains(cliente.identificacion).should('be.visible')
 
         // Filtrar por email del cliente recién creado
-        cy.get('#filter-search').clear().type(cliente.email)
+        cy.typeSafe('#filter-search', cliente.email)
         cy.get('#filter-boton').click()
         cy.contains(cliente.identificacion).should('be.visible')
 
         // Filtrar por identificación del cliente recién creado
-        cy.get('#filter-search').clear().type(cliente.identificacion)
+        cy.typeSafe('#filter-search', cliente.identificacion)
         cy.get('#filter-boton').click()
         cy.contains(cliente.email).should('be.visible')
 
         //Filtrar por tipo de persona
-        cy.get('#filter-search').clear()
+        cy.clearSafe('#filter-search')
         cy.get('#filter-select-tipo_persona').select('Natural')
         cy.get('#filter-boton').click()
         cy.get('table tbody tr').eq(0).find('td').eq(3).should('contain.text', 'Natural')
@@ -162,19 +162,27 @@ describe('Gestión de Clientes', () => {
       cy.get('#filter-search').type(cliente.identificacion)
       cy.get('#filter-boton').click()
 
+      // Interceptar solicitud GET para sincronización
+      cy.intercept('GET', `${Cypress.env('apiUrl')}/clientes/**`).as('getCliente')
 
       // Seleccionar cliente recién creado para editar
       cy.seleccionarAccionFila(0,1)
       cy.contains('Editar Cliente').should('be.visible')
+
+      // Esperar a la respuesta del backend
+      cy.wait('@getCliente')
+
+      // asegurar que el input ya está presente y estable tras el re-render
+      cy.get('#nombre', { timeout: 10000 }).should('be.visible')
       
       // Rellenar formulario
-      cy.get('#nombre').clear().type('Cliente Editado CY')
-      cy.get('#email').clear().type(email)
-      cy.get('#telefono').clear().type('1122334455')
-      cy.get('#direccion').clear().type('Avenida 123')
+      cy.typeSafe('#nombre', 'Cliente Editado CY')
+      cy.typeSafe('#email', email)
+      cy.typeSafe('#telefono', '1122334455')
+      cy.typeSafe('#direccion', 'Avenida 123')
       cy.get('#tipo_persona').select('Jurídica')
       cy.get('#estado').select('Activo')
-      cy.get('#identificacion').clear().type(identificacion)
+      cy.typeSafe('#identificacion', identificacion)
 
       cy.get('#editar-boton').click()
 
@@ -196,18 +204,27 @@ describe('Gestión de Clientes', () => {
         cy.get('#filter-search').type(cliente.identificacion)
         cy.get('#filter-boton').click()
 
+        // Interceptar solicitud GET para sincronización
+        cy.intercept('GET', `${Cypress.env('apiUrl')}/clientes/**`).as('getCliente')
+
         // Seleccionar cliente recién creado para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Cliente').should('be.visible')
 
+        // Esperar a la respuesta del backend
+        cy.wait('@getCliente')
+
+        // asegurar que el input ya está presente y estable tras el re-render
+        cy.get('#nombre', { timeout: 10000 }).should('be.visible')
+
         // Rellenar formulario
-        cy.get('#nombre').clear().type('Cliente Editado CY')
-        cy.get('#email').clear().type(cliente_editar.email) // Email duplicado
-        cy.get('#telefono').clear().type('1122334455')
-        cy.get('#direccion').clear().type('Avenida 123')
+        cy.typeSafe('#nombre', 'Cliente Editado CY')
+        cy.typeSafe('#email', cliente_editar.email) // Email duplicado
+        cy.typeSafe('#telefono', '1122334455')
+        cy.typeSafe('#direccion', 'Avenida 123')
         cy.get('#tipo_persona').select('Jurídica')
         cy.get('#estado').select('Activo')
-        cy.get('#identificacion').clear().type(identificacion)
+        cy.typeSafe('#identificacion', identificacion)
 
         // Guardar cliente
         cy.get('#editar-boton').click()
@@ -230,18 +247,27 @@ describe('Gestión de Clientes', () => {
         cy.get('#filter-search').type(cliente.identificacion)
         cy.get('#filter-boton').click()
 
+        // Interceptar solicitud GET para sincronización
+        cy.intercept('GET', `${Cypress.env('apiUrl')}/clientes/**`).as('getCliente')
+
         // Seleccionar cliente recién creado para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Cliente').should('be.visible')
 
+        // Esperar a la respuesta del backend
+        cy.wait('@getCliente')
+
+        // asegurar que el input ya está presente y estable tras el re-render
+        cy.get('#nombre', { timeout: 10000 }).should('be.visible')
+
         // Rellenar formulario
-        cy.get('#nombre').clear().type('Cliente Editado CY')
-        cy.get('#email').clear().type(email)
-        cy.get('#telefono').clear().type('1122334455')
-        cy.get('#direccion').clear().type('Avenida 123')
+        cy.typeSafe('#nombre', 'Cliente Editado CY')
+        cy.typeSafe('#email', email)
+        cy.typeSafe('#telefono', '1122334455')
+        cy.typeSafe('#direccion', 'Avenida 123')
         cy.get('#tipo_persona').select('Jurídica')
         cy.get('#estado').select('Activo')
-        cy.get('#identificacion').clear().type(cliente_editar.identificacion) // Identificación duplicada
+        cy.typeSafe('#identificacion', cliente_editar.identificacion) // Identificación duplicada
 
         // Guardar cliente
         cy.get('#editar-boton').click()

@@ -15,7 +15,7 @@ describe('Gestión de Categorías', () => {
         cy.contains(categoria.descripcion).should('be.visible')
 
         // Filtrar por estado
-        cy.get('#filter-search').clear()
+        cy.clearSafe('#filter-search')
         cy.get('#filter-select-estado').select('Inactivo')
         cy.get('#filter-boton').click()
         cy.contains(categoria.nombre).should('be.visible')
@@ -96,14 +96,23 @@ describe('Gestión de Categorías', () => {
       cy.get('#filter-search').type(categoria.nombre)
       cy.get('#filter-boton').click()
 
+      // Interceptar solicitud GET para sincronización
+      cy.intercept('GET', `${Cypress.env('apiUrl')}/categorias/**`).as('getCategoria')
+
       // Seleccionar categoría recién creada para editar
       cy.seleccionarAccionFila(0,1)
       cy.contains('Editar Categoría').should('be.visible')
+
+      // Esperar a la respuesta del backend
+      cy.wait('@getCategoria')
+
+      // asegurar que el input ya está presente y estable tras el re-render
+      cy.get('#nombre', { timeout: 10000 }).should('be.visible')
       
       // Rellenar formulario
-      cy.get('#nombre').clear().type(nombre)
+      cy.typeSafe('#nombre', nombre)
       cy.get('#estado').select('Activo')
-      cy.get('#descripcion').clear().type('Descripción de la categoría editada')
+      cy.typeSafe('#descripcion', 'Descripción de la categoría editada')
 
       cy.get('#editar-boton').click()
 
@@ -122,14 +131,23 @@ describe('Gestión de Categorías', () => {
         cy.get('#filter-search').type(categoria.nombre)
         cy.get('#filter-boton').click()
 
+        // Interceptar solicitud GET para sincronización
+        cy.intercept('GET', `${Cypress.env('apiUrl')}/categorias/**`).as('getCategoria')
+
         // Seleccionar categoría recién creada para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Categoría').should('be.visible')
 
+        // Esperar a la respuesta del backend
+        cy.wait('@getCategoria')
+
+        // asegurar que el input ya está presente y estable tras el re-render
+        cy.get('#nombre', { timeout: 10000 }).should('be.visible')
+
         // Rellenar formulario
-        cy.get('#nombre').clear().type(categoria_editar.nombre) // Nombre duplicado
+        cy.typeSafe('#nombre', categoria_editar.nombre) // Nombre duplicado
         cy.get('#estado').select('Activo')
-        cy.get('#descripcion').clear().type('Descripción de la categoría editada')
+        cy.typeSafe('#descripcion', 'Descripción de la categoría editada')
         
         // Guardar categoria
         cy.get('#editar-boton').click()

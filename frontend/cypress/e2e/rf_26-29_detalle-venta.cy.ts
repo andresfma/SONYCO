@@ -38,14 +38,14 @@ describe('Gestión de Detalles de venta', () => {
                             cy.contains(detalleId).should('be.visible')
 
                             // Filtrar por código de producto
-                            cy.get('#filter-search').clear().type(producto.codigo)
+                            cy.typeSafe('#filter-search', producto.codigo)
                             cy.get('#filter-boton').click()
                             
                             // Validar existencia
                             cy.contains(detalleId).should('be.visible')
 
                             // Filtrar por ID de detalle
-                            cy.get('#filter-search').clear().type(detalleId.toString())
+                            cy.typeSafe('#filter-search', detalleId.toString())
                             cy.get('#filter-boton').click()
                             
                             // Validar existencia
@@ -220,16 +220,22 @@ describe('Gestión de Detalles de venta', () => {
                                     cy.contains(detalleId).should('be.visible')
 
                                     // Filtrar por ID de detalle
-                                    cy.get('#filter-search').clear().type(detalleId.toString())
+                                    cy.typeSafe('#filter-search', detalleId.toString())
                                     cy.get('#filter-boton').click()
                                     
                                     // Validar existencia
                                     cy.contains(producto.nombre).should('be.visible')
 
+                                    // Interceptar solicitud GET para sincronización
+                                    cy.intercept('GET', `${Cypress.env('apiUrl')}/detalle_venta/**`).as('getDetalle')
+
                                     // Seleccionar opción editar
                                     cy.seleccionarAccionFila(0,0)
                                     cy.contains('Editar la sub-venta').should('be.visible')
                                     cy.contains(detalleId).should('be.visible')
+
+                                    // Esperar a la respuesta del backend
+                                    cy.wait('@getDetalle')
                                     
                                     // Rellenar formulario
                                     // Seleccionar producto usando el InfiniteScrollSelect
@@ -238,8 +244,8 @@ describe('Gestión de Detalles de venta', () => {
                                     cy.get(`#infinite-scroll-option-${producto_editar.id}`).click()
 
                                     // Editar cantidad y precio unitario
-                                    cy.get('#cantidad').clear().type('20')
-                                    cy.get('#precio_unitario').clear().type('10000')  // Subtotal 20*10000 = 200000
+                                    cy.typeSafe('#cantidad', '20')
+                                    cy.typeSafe('#precio_unitario', '10000')  // Subtotal 20*10000 = 200000
 
                                     // Editar boton
                                     cy.get('#editar-boton').click()
@@ -286,17 +292,23 @@ describe('Gestión de Detalles de venta', () => {
                                     cy.contains(detalleId).should('be.visible')
 
                                     // Filtrar por ID de detalle
-                                    cy.get('#filter-search').clear().type(detalleId.toString())
+                                    cy.typeSafe('#filter-search', detalleId.toString())
                                     cy.get('#filter-boton').click()
                                     
                                     // Validar existencia
                                     cy.contains(producto.nombre).should('be.visible')
+
+                                    // Interceptar solicitud GET para sincronización
+                                    cy.intercept('GET', `${Cypress.env('apiUrl')}/detalle_venta/**`).as('getDetalle')
 
                                     // Seleccionar opción editar
                                     cy.seleccionarAccionFila(0,0)
                                     cy.contains('Editar la sub-venta').should('be.visible')
                                     cy.contains(detalleId).should('be.visible')
                                     
+                                    // Esperar a la respuesta del backend
+                                    cy.wait('@getDetalle')
+
                                     // Rellenar formulario
                                     // Seleccionar producto usando el InfiniteScrollSelect
                                     cy.get('#infinite-scroll-select-button').click()
@@ -304,8 +316,8 @@ describe('Gestión de Detalles de venta', () => {
                                     cy.get(`#infinite-scroll-option-${producto_editar.id}`).click()
 
                                     // Editar cantidad y precio unitario
-                                    cy.get('#cantidad').clear().type('10000000000') // valor muy grande
-                                    cy.get('#precio_unitario').clear().type('10000')
+                                    cy.typeSafe('#cantidad', '10000000000') // valor muy grande
+                                    cy.typeSafe('#precio_unitario', '10000')
 
                                     // Editar boton
                                     cy.get('#editar-boton').click()
@@ -349,7 +361,7 @@ describe('Gestión de Detalles de venta', () => {
                             cy.contains(detalleId).should('be.visible')
 
                             // Filtrar por ID de detalle
-                            cy.get('#filter-search').clear().type(detalleId.toString())
+                            cy.typeSafe('#filter-search', detalleId.toString())
                             cy.get('#filter-boton').click()
                             
                             // Validar existencia
@@ -398,7 +410,7 @@ describe('Gestión de Detalles de venta', () => {
                             cy.contains(detalleId).should('be.visible')
 
                             // Filtrar por ID de detalle
-                            cy.get('#filter-search').clear().type(detalleId.toString())
+                            cy.typeSafe('#filter-search', detalleId.toString())
                             cy.get('#filter-boton').click()
                             
                             // Validar existencia

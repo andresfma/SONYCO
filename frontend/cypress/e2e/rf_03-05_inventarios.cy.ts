@@ -17,12 +17,12 @@ describe('Gestión de Inventarios', () => {
               cy.contains(producto.codigo).should('be.visible')
 
               // Filtrar por código del producto del inventario recién creado
-              cy.get('#filter-search').clear().type(producto.codigo)
+              cy.typeSafe('#filter-search', producto.codigo)
               cy.get('#filter-boton').click()
               cy.contains(producto.nombre).should('be.visible')
 
               // Filtrar por estado
-              cy.get('#filter-search').clear()
+              cy.clearSafe('#filter-search')
               cy.get('#filter-select-estado').select('Inactivo')
               cy.get('#filter-boton').click()
               cy.contains(producto.codigo).should('be.visible')
@@ -92,13 +92,23 @@ describe('Gestión de Inventarios', () => {
               cy.get('#filter-boton').click()
               cy.contains(producto.nombre).should('be.visible')
 
+              // Interceptar solicitud GET para sincronización
+              cy.intercept('GET', `${Cypress.env('apiUrl')}/inventarios/**`).as('getInventario')
+
               // Seleccionar inventario recién creado para editar
               cy.seleccionarAccionFila(0,1)
               cy.contains('Editar Inventario').should('be.visible')
+
+              // Esperar a la respuesta del backend
+              cy.wait('@getInventario')
+
+
+              // asegurar que el input ya está presente y estable tras el re-render
+              cy.get('#cantidad', { timeout: 10000 }).should('be.visible')
               
               // Rellenar formulario
-              cy.get('#cantidad').clear().type('150') // crea automáticamente un movimiento "ENTRADA_EDICIÓN" por 150 - 100 = 50
-              cy.get('#cantidad_minima').clear().type('15')
+              cy.typeSafe('#cantidad', '150') // Crea automáticamente un movimiento "ENTRADA_EDICIÓN" por 150 - 100 = 50
+              cy.typeSafe('#cantidad_minima', '15')
               cy.get('#estado').select('Inactivo')
 
               cy.get('#editar-boton').click()
@@ -135,13 +145,22 @@ describe('Gestión de Inventarios', () => {
             cy.get('#filter-boton').click()
             cy.contains(producto.nombre).should('be.visible')
 
+            // Interceptar solicitud GET para sincronización
+            cy.intercept('GET', `${Cypress.env('apiUrl')}/inventarios/**`).as('getInventario')
+
             // Seleccionar inventario recién creado para editar
             cy.seleccionarAccionFila(0,1)
             cy.contains('Editar Inventario').should('be.visible')
+
+            // Esperar a la respuesta del backend
+            cy.wait('@getInventario')
+
+            // asegurar que el input ya está presente y estable tras el re-render
+            cy.get('#cantidad', { timeout: 10000 }).should('be.visible')
             
             // Rellenar formulario
-            cy.get('#cantidad').clear()
-            cy.get('#cantidad_minima').clear()
+            cy.clearSafe('#cantidad')
+            cy.clearSafe('#cantidad_minima')
 
             cy.get('#editar-boton').click()
 

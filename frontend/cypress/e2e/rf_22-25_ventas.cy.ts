@@ -16,17 +16,17 @@ describe('Gestión de Ventas', () => {
             cy.contains(cliente.nombre).should('be.visible')
 
             // Filtrar por cliente de la venta
-            cy.get('#filter-search').clear().type(cliente.nombre)
+            cy.typeSafe('#filter-search', cliente.nombre)
             cy.get('#filter-boton').click()
             cy.contains(venta.id).should('be.visible')
             
             // Filtrar por vendedor de la venta (admin en este caso)
-            cy.get('#filter-search').clear().type('Admin')
+            cy.typeSafe('#filter-search', 'Admin')
             cy.get('#filter-boton').click()
             cy.contains(venta.id).should('be.visible')
 
             //Filtrar por estado
-            cy.get('#filter-search').clear()
+            cy.clearSafe('#filter-search')
             cy.get('#filter-select-estado').select('Inactivo')
             cy.get('#filter-boton').click()
             cy.contains(venta.id).should('be.visible')
@@ -92,9 +92,15 @@ describe('Gestión de Ventas', () => {
                 cy.get('#filter-boton').click()
                 cy.contains(cliente_2.nombre).should('be.visible')
 
+                // Interceptar solicitud GET para sincronización
+                cy.intercept('GET', `${Cypress.env('apiUrl')}/ventas/**`).as('getVentas')
+
                 // Seleccionar venta recién creada para editar
                 cy.seleccionarAccionFila(0,1)
                 cy.contains('Editar Venta').should('be.visible')
+
+                // Esperar a la respuesta del backend
+                cy.wait('@getVentas')
                 
                 // Rellenar formulario
 

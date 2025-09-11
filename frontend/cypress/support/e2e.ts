@@ -15,3 +15,13 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+import 'cypress-mochawesome-reporter/register';
+
+// // Capturar screenshot después de cada test
+// afterEach(function () {
+//   const testName = this.currentTest?.title;
+
+//   if (testName) {
+//     cy.screenshot(testName, { capture: 'runner' });
+//   }
+// });

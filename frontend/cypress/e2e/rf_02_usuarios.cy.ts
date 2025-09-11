@@ -15,12 +15,12 @@ describe('Gestión de usuarios y roles', () => {
       cy.contains(usuario.email).should('be.visible')
 
       // Filtrar por email de usuario recién creado
-      cy.get('#filter-search').clear().type(usuario.email)
+      cy.typeSafe('#filter-search', usuario.email)
       cy.get('#filter-boton').click()
       cy.contains(usuario.nombre).should('be.visible')
 
       //Filtrar por estado
-      cy.get('#filter-search').clear()
+      cy.clearSafe('#filter-search')
       cy.get('#filter-select-estado').select('Inactivo')
       cy.get('#filter-boton').click()
       cy.contains(usuario.nombre).should('be.visible')
@@ -159,16 +159,26 @@ describe('Gestión de usuarios y roles', () => {
       cy.get('#filter-boton').click()
       cy.contains(usuario.nombre).should('be.visible')
 
+      // Interceptar solicitud GET para sincronización
+      cy.intercept('GET', `${Cypress.env('apiUrl')}/usuarios/**`).as('getUsuario')
+
       // Seleccionar opción editar para el usuario recién creado
       cy.seleccionarAccionFila(0,1)
-
       cy.contains('Editar Usuario').should('be.visible')
-      cy.get('#nombre').clear().type(nombreUsuario)
-      cy.get('#email').clear().type(emailUsuario)
+
+      // Esperar a la respuesta del backend
+      cy.wait('@getUsuario')
+
+      // asegurar que el input ya está presente y estable tras el re-render
+      cy.get('#nombre', { timeout: 10000 }).should('be.visible')
+
+      // Rellenar formulario
+      cy.typeSafe('#nombre', nombreUsuario)
+      cy.typeSafe('#email', emailUsuario)
       cy.get('#estado').select('Inactivo')
       cy.get('#rol_id').select('Usuario')
-      cy.get('#contrasena').clear().type('12345678aA')
-      cy.get('#confirmar_contrasena').clear().type('12345678aA')
+      cy.typeSafe('#contrasena', '12345678aA')
+      cy.typeSafe('#confirmar_contrasena', '12345678aA')
 
       cy.get('#editar-boton').click()
 
@@ -190,15 +200,26 @@ describe('Gestión de usuarios y roles', () => {
         cy.get('#filter-boton').click()
         cy.contains(usuario.nombre).should('be.visible')
 
+        // Interceptar solicitud GET para sincronización
+        cy.intercept('GET', `${Cypress.env('apiUrl')}/usuarios/**`).as('getUsuario')
+
         // Seleccionar opción editar del usuario recién creado
         cy.seleccionarAccionFila(0,1)
+        cy.contains('Editar Usuario').should('be.visible')
 
-        cy.get('#nombre').clear().type(nombreUsuario)
-        cy.get('#email').clear().type(usuario_editar.email) // correo existente
+        // Esperar a la respuesta del backend
+        cy.wait('@getUsuario')
+
+        // asegurar que el input ya está presente y estable tras el re-render
+        cy.get('#nombre', { timeout: 10000 }).should('be.visible')
+
+        // Rellenar formulario
+        cy.typeSafe('#nombre', nombreUsuario)
+        cy.typeSafe('#email', usuario_editar.email) // correo existente
         cy.get('#estado').select('Inactivo')
         cy.get('#rol_id').select('Usuario')
-        cy.get('#contrasena').clear().type('12345678aA')
-        cy.get('#confirmar_contrasena').clear().type('12345678aA')
+        cy.typeSafe('#contrasena', '12345678aA')
+        cy.typeSafe('#confirmar_contrasena', '12345678aA')
 
         cy.get('#editar-boton').click()
 

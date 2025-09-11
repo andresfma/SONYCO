@@ -16,18 +16,18 @@ describe('Gestión de Productos', () => {
           cy.contains(producto.codigo).should('be.visible')
 
           // Filtrar por código producto recién creado
-          cy.get('#filter-search').clear().type(producto.codigo)
+          cy.typeSafe('#filter-search', producto.codigo)
           cy.get('#filter-boton').click()
           cy.contains(producto.nombre).should('be.visible')
 
           //Filtrar por categoría
-          cy.get('#filter-search').clear()
+          cy.clearSafe('#filter-search')
           cy.get('#filter-categoria').type(producto.categoria.nombre)
           cy.get('#filter-boton').click()
           cy.contains(producto.categoria.nombre).should('be.visible')
 
           //Filtrar por estado
-          cy.get('#filter-categoria').clear()
+          cy.clearSafe('#filter-categoria')
           cy.get('#filter-select-estado').select('Inactivo')
           cy.get('#filter-boton').click()
           cy.contains(producto.nombre).should('be.visible')
@@ -139,14 +139,23 @@ describe('Gestión de Productos', () => {
         cy.get('#filter-boton').click()
         cy.contains(producto.nombre).should('be.visible')
 
+        // Interceptar solicitud GET para sincronización
+        cy.intercept('GET', `${Cypress.env('apiUrl')}/productos/**`).as('getProducto')
+
         // Seleccionar tercer producto para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Producto').should('be.visible')
+
+        // Esperar a la respuesta del backend
+        cy.wait('@getProducto')
+
+        // asegurar que el input ya está presente y estable tras el re-render
+        cy.get('#codigo', { timeout: 10000 }).should('be.visible')
         
         // Rellenar formulario
-        cy.get('#codigo').clear().type(codigo)
-        cy.get('#nombre').clear().type('Producto Editado CY')
-        cy.get('#precio_unitario').clear().type('80000')
+        cy.typeSafe('#codigo', codigo)
+        cy.typeSafe('#nombre', 'Producto Editado CY')
+        cy.typeSafe('#precio_unitario', '80000')
         cy.get('#unidad_medida').select('Caja')
 
         // Seleccionar categoría usando el InfiniteScrollSelect
@@ -155,7 +164,7 @@ describe('Gestión de Productos', () => {
         cy.get(`#infinite-scroll-option-${categoria.id}`).click()
 
         cy.get('#estado').select('Inactivo')
-        cy.get('#descripcion').clear().type('Descripción editada del producto')
+        cy.typeSafe('#descripcion', 'Descripción editada del producto')
 
         cy.get('#editar-boton').click()
 
@@ -176,14 +185,23 @@ describe('Gestión de Productos', () => {
           cy.get('#filter-search').type(producto.codigo)
           cy.get('#filter-boton').click()
 
+          // Interceptar solicitud GET para sincronización
+          cy.intercept('GET', `${Cypress.env('apiUrl')}/productos/**`).as('getProducto')
+
           // Seleccionar tercer producto para editar
           cy.seleccionarAccionFila(0,1)
           cy.contains('Editar Producto').should('be.visible')
 
+          // Esperar a la respuesta del backend
+          cy.wait('@getProducto')
+
+          // asegurar que el input ya está presente y estable tras el re-render
+          cy.get('#codigo', { timeout: 10000 }).should('be.visible')
+
           // Rellenar formulario
-          cy.get('#codigo').clear().type(producto_editar.codigo) // codigo existente
-          cy.get('#nombre').clear().type('Producto con Código Duplicado')
-          cy.get('#precio_unitario').clear().type('80000')
+          cy.typeSafe('#codigo', producto_editar.codigo) // codigo existente
+          cy.typeSafe('#nombre', 'Producto con Código Duplicado')
+          cy.typeSafe('#precio_unitario', '80000')
           cy.get('#unidad_medida').select('Paquete')
 
           // Seleccionar categoría usando el InfiniteScrollSelect
@@ -192,7 +210,7 @@ describe('Gestión de Productos', () => {
           cy.get(`#infinite-scroll-option-${categoria.id}`).click()
 
           cy.get('#estado').select('Inactivo')
-          cy.get('#descripcion').clear().type('Descripción del producto con código duplicado')
+          cy.typeSafe('#descripcion', 'Descripción del producto con código duplicado')
 
           // Guardar producto
           cy.get('#editar-boton').click()

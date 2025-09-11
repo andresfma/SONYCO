@@ -36,7 +36,9 @@
 //   }
 // }
 
+// ------------------------------
 // Login
+// ------------------------------
 Cypress.Commands.add('login', () => {
   cy.request('POST', `${Cypress.env('apiUrl')}/auth/login`, {
     email: 'admin@admin.com',
@@ -48,9 +50,10 @@ Cypress.Commands.add('login', () => {
   })
 })
 
+// ------------------------------
 // Crear usuario para pruebas
-
-Cypress.Commands.add('crearUsuarioParaPruebas', (rolId = 2, estado = true) => {
+// ------------------------------
+Cypress.Commands.add('crearUsuarioParaPruebas', (rolId:number = 2, estado: boolean = true) => {
   const randomId = Date.now()
   const usuarioPrueba = {
     nombre: `Usuario Test ${randomId}`,
@@ -75,9 +78,10 @@ Cypress.Commands.add('crearUsuarioParaPruebas', (rolId = 2, estado = true) => {
   })
 })
 
+// ------------------------------
 // Crear producto para pruebas
-
-Cypress.Commands.add('crearProductoParaPruebas', (categoriaId, estado = true) => {
+// ------------------------------
+Cypress.Commands.add('crearProductoParaPruebas', (categoriaId: number, estado: boolean = true) => {
   const randomId = Date.now()
   const productoPrueba = {
     codigo: 'Y' + randomId,
@@ -104,9 +108,10 @@ Cypress.Commands.add('crearProductoParaPruebas', (categoriaId, estado = true) =>
   })
 })
 
+// ------------------------------
 // Crear inventario para pruebas
-
-Cypress.Commands.add('crearInventarioParaPruebas', (producto_id, estado = true, ) => {
+// ------------------------------
+Cypress.Commands.add('crearInventarioParaPruebas', (producto_id: number, estado: true = true, ) => {
   const randomId = Date.now()
   const inventarioPrueba = {
     producto_id: producto_id,
@@ -130,9 +135,10 @@ Cypress.Commands.add('crearInventarioParaPruebas', (producto_id, estado = true, 
   })
 })
 
+// ------------------------------
 // Crear movimiento de inventario para pruebas
-
-Cypress.Commands.add('crearMovimientoParaPruebas', (producto_id, tipo = 'ENTRADA', cantidad = 20) => {
+// ------------------------------
+Cypress.Commands.add('crearMovimientoParaPruebas', (producto_id: number, tipo: string = 'ENTRADA', cantidad: number = 20) => {
   const inventarioPrueba = {
     tipo: tipo,
     producto_id: producto_id,
@@ -155,9 +161,10 @@ Cypress.Commands.add('crearMovimientoParaPruebas', (producto_id, tipo = 'ENTRADA
 })
 
 
+// ------------------------------
 // Crear cliente para pruebas
-
-Cypress.Commands.add('crearClienteParaPruebas', (estado = true) => {
+// ------------------------------
+Cypress.Commands.add('crearClienteParaPruebas', (estado: boolean = true) => {
   const randomId = Date.now()
   const clientePrueba = {
     nombre: `Cliente Test ${randomId}`,
@@ -184,9 +191,10 @@ Cypress.Commands.add('crearClienteParaPruebas', (estado = true) => {
   })
 })
 
+// ------------------------------
 // Crear categoría para pruebas
-
-Cypress.Commands.add('crearCategoriaParaPruebas', (estado = true) => {
+// ------------------------------
+Cypress.Commands.add('crearCategoriaParaPruebas', (estado: boolean = true) => {
   const randomId = Date.now()
   const categoriaPrueba = {
     nombre: `Categoría test ${randomId}`,
@@ -209,9 +217,10 @@ Cypress.Commands.add('crearCategoriaParaPruebas', (estado = true) => {
   })
 })
 
+// ------------------------------
 // Crear venta para pruebas
-
-Cypress.Commands.add('crearVentaParaPruebas', (clienteId, estado = true) => {
+// ------------------------------
+Cypress.Commands.add('crearVentaParaPruebas', (clienteId: number, estado: boolean = true) => {
   const ventaPrueba = {
     cliente_id: clienteId,
     estado: estado
@@ -232,9 +241,10 @@ Cypress.Commands.add('crearVentaParaPruebas', (clienteId, estado = true) => {
   })
 })
 
+// ------------------------------
 // Crear detalle de venta para pruebas
-
-Cypress.Commands.add('crearDetalleVentaParaPruebas', (ventaId, productoId, cantidad = 10) => {
+// ------------------------------
+Cypress.Commands.add('crearDetalleVentaParaPruebas', (ventaId: number, productoId: number, cantidad: number = 10) => {
   const detalleVentaPrueba = {
     producto_id: productoId,
     cantidad: cantidad,
@@ -256,18 +266,20 @@ Cypress.Commands.add('crearDetalleVentaParaPruebas', (ventaId, productoId, canti
   })
 })
 
+// ------------------------------
 // Seleccionar acción en fila de tabla (0=primera fila, 1=segunda fila, etc; 0=ver, 1=editar, 2=activar/desactivar, 3=eliminar)
-
-Cypress.Commands.add('seleccionarAccionFila', (filaIndex, actionIndex) => {
+// ------------------------------
+Cypress.Commands.add('seleccionarAccionFila', (filaIndex: number, actionIndex: number) => {
   return cy.get('table tbody tr')
     .eq(filaIndex)
     .find('td:last-child button')
     .eq(actionIndex).click()
 })
 
+// ------------------------------
 // Navegar a una entidad desde el menú lateral y verificar que se cargó correctamente
-
-Cypress.Commands.add('abrirEntidad', (entidad) => {
+// ------------------------------
+Cypress.Commands.add('abrirEntidad', (entidad: string) => {
   cy.get(`[href="/${entidad}"]`).click()
   cy.url().should('include', `/${entidad}`)
 
@@ -281,8 +293,10 @@ Cypress.Commands.add('abrirEntidad', (entidad) => {
   cy.contains(textoEsperado).should('be.visible')
 })
 
-// Exportar reporte de una entidad
 
+// ------------------------------
+// Exportar reporte de una entidad
+// ------------------------------
 Cypress.Commands.add('exportarEntidad', (entidad: string) => {
   // Abrir la entidad en el sistema
   cy.abrirEntidad(entidad)
@@ -299,6 +313,32 @@ Cypress.Commands.add('exportarEntidad', (entidad: string) => {
   // Validar que la respuesta fue correcta
   cy.wait('@descargaReporte').its('response.statusCode').should('eq', 200)
 })
+
+
+// ------------------------------
+// Limpia un input de forma segura
+// ------------------------------
+Cypress.Commands.add('clearSafe', (selector: string) => {
+  cy.get(selector)
+    .should('be.visible')
+    .and('not.be.disabled')
+    .clear();
+});
+
+// ------------------------------
+// Limpia y escribe en un input de forma segura
+// ------------------------------
+Cypress.Commands.add('typeSafe', (selector: string, text: string) => {
+  cy.get(selector)
+    .should('be.visible')
+    .and('not.be.disabled')
+    .clear();
+
+  cy.get(selector)
+    .should('be.visible')
+    .and('not.be.disabled')
+    .type(text, { delay: 30 }); // delay evita errores en inputs controlados (React/Vue)
+});
 
 
 
