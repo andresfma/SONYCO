@@ -49,7 +49,7 @@ describe('Gestión de Ventas', () => {
         cy.contains('Nueva Venta').click()
 
         // Rellenar formulario
-        // Seleccionar producto usando el InfiniteScrollSelect
+        // Seleccionar cliente usando el InfiniteScrollSelect
         cy.get('#infinite-scroll-select-button').click()
         cy.get('#infinite-scroll-search-input').type(cliente.nombre)
         cy.get(`#infinite-scroll-option-${cliente.id}`).click()
@@ -60,7 +60,7 @@ describe('Gestión de Ventas', () => {
         // Guardar venta
         cy.get('#crear-boton').click()
 
-        // Verificar redirección al detalle del venta recién creado
+        // Verificar redirección al detalle de la venta recién creado
         cy.url().should('match', /\/ventas\/\d+$/)
         cy.contains('Detalle de la Venta').should('be.visible')
     })
@@ -92,13 +92,13 @@ describe('Gestión de Ventas', () => {
                 cy.get('#filter-boton').click()
                 cy.contains(cliente_2.nombre).should('be.visible')
 
-                // Seleccionar tercer venta para editar
+                // Seleccionar venta recién creada para editar
                 cy.seleccionarAccionFila(0,1)
                 cy.contains('Editar Venta').should('be.visible')
                 
                 // Rellenar formulario
 
-                // Seleccionar producto usando el InfiniteScrollSelect
+                // Seleccionar cliente usando el InfiniteScrollSelect
                 cy.get('#infinite-scroll-select-button').click()
                 cy.get('#infinite-scroll-search-input').type(cliente_1.nombre)
                 cy.get(`#infinite-scroll-option-${cliente_1.id}`).click()
@@ -107,7 +107,7 @@ describe('Gestión de Ventas', () => {
 
                 cy.get('#editar-boton').click()
 
-                // Verificar redirección al detalle del usuario actualizado
+                // Verificar redirección al detalle de la venta actualizado
                 cy.url().should('match', /\/ventas\/\d+$/)
                 cy.contains('Detalle de la Venta').should('be.visible')
             })
@@ -150,7 +150,7 @@ describe('Gestión de Ventas', () => {
                             cy.get('#filter-search').type(venta.id.toString())
                             cy.get('#filter-boton').click()
 
-                            // Intentar eliminar el prodcuto filtrado con relaciones
+                            // Intentar eliminar la venta filtrada con relaciones
                             cy.seleccionarAccionFila(0,3)
                             cy.get('#delete-boton').click()
 
@@ -178,7 +178,7 @@ describe('Gestión de Ventas', () => {
                         cy.get('#filter-search').type(venta.id.toString())
                         cy.get('#filter-boton').click()
 
-                        // Intentar eliminar el prodcuto filtrado con relaciones
+                        // Intentar eliminar la venta filtrada con relaciones
                         cy.seleccionarAccionFila(0,2)
 
                         // Validar mensaje de error por relaciones activas

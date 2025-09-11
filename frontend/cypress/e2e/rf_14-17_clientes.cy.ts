@@ -68,7 +68,7 @@ describe('Gestión de Clientes', () => {
     // Guardar cliente
     cy.get('#crear-boton').click()
 
-    // Verificar redirección al detalle y visibilidad del usuario
+    // Verificar redirección al detalle y visibilidad del cliente
     cy.url().should('match', /\/clientes\/\d+$/)
     cy.contains('Detalle del Cliente').should('be.visible')
   })
@@ -95,7 +95,7 @@ describe('Gestión de Clientes', () => {
         // Guardar cliente
         cy.get('#crear-boton').click()
 
-        // Validar mensaje de error por código duplicado
+        // Validar mensaje de error por email duplicado
         cy.contains('Error al crear').should('be.visible')
         cy.contains('ya existe').should('be.visible')
 
@@ -124,7 +124,7 @@ describe('Gestión de Clientes', () => {
         // Guardar cliente
         cy.get('#crear-boton').click()
 
-        // Validar mensaje de error por código duplicado
+        // Validar mensaje de error por identificación duplicada
         cy.contains('Error al crear').should('be.visible')
         cy.contains('ya existe').should('be.visible')
 
@@ -158,12 +158,12 @@ describe('Gestión de Clientes', () => {
 
       cy.abrirEntidad('clientes')
 
-      // Filtrar por producto recién creado
+      // Filtrar por cliente recién creado
       cy.get('#filter-search').type(cliente.identificacion)
       cy.get('#filter-boton').click()
 
 
-      // Seleccionar tercer cliente para editar
+      // Seleccionar cliente recién creado para editar
       cy.seleccionarAccionFila(0,1)
       cy.contains('Editar Cliente').should('be.visible')
       
@@ -178,7 +178,7 @@ describe('Gestión de Clientes', () => {
 
       cy.get('#editar-boton').click()
 
-      // Verificar redirección al detalle del usuario actualizado
+      // Verificar redirección al detalle del cliente actualizado
       cy.url().should('match', /\/clientes\/\d+$/)
       cy.contains('Detalle del Cliente').should('be.visible')
     })
@@ -196,7 +196,7 @@ describe('Gestión de Clientes', () => {
         cy.get('#filter-search').type(cliente.identificacion)
         cy.get('#filter-boton').click()
 
-        // Seleccionar tercer cliente para editar
+        // Seleccionar cliente recién creado para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Cliente').should('be.visible')
 
@@ -212,7 +212,7 @@ describe('Gestión de Clientes', () => {
         // Guardar cliente
         cy.get('#editar-boton').click()
 
-        // Validar mensaje de error por código duplicado
+        // Validar mensaje de error por email duplicado
         cy.contains('Error al actualizar').should('be.visible')
         cy.contains('Ya existe').should('be.visible')
       })
@@ -230,7 +230,7 @@ describe('Gestión de Clientes', () => {
         cy.get('#filter-search').type(cliente.identificacion)
         cy.get('#filter-boton').click()
 
-        // Seleccionar tercer cliente para editar
+        // Seleccionar cliente recién creado para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Cliente').should('be.visible')
 
@@ -246,7 +246,7 @@ describe('Gestión de Clientes', () => {
         // Guardar cliente
         cy.get('#editar-boton').click()
 
-        // Validar mensaje de error por código duplicado
+        // Validar mensaje de error por identificación duplicada
         cy.contains('Error al actualizar').should('be.visible')
         cy.contains('Ya existe').should('be.visible')
       })

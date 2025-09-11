@@ -58,7 +58,7 @@ describe('Gestión de Productos', () => {
       cy.get('#precio_unitario').type('10000')
       cy.get('#unidad_medida').select('Unidad')
 
-      // Seleccionar producto usando el InfiniteScrollSelect
+      // Seleccionar categoría usando el InfiniteScrollSelect
       cy.get('#infinite-scroll-select-button').click()
       cy.get('#infinite-scroll-search-input').type(categoria.nombre)
       cy.get(`#infinite-scroll-option-${categoria.id}`).click()

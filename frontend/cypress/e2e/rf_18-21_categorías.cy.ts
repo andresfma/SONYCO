@@ -44,7 +44,7 @@ describe('Gestión de Categorías', () => {
     // Guardar categoria
     cy.get('#crear-boton').click()
 
-    // Verificar redirección al detalle y visibilidad del usuario
+    // Verificar redirección al detalle y visibilidad del categoría
     cy.url().should('match', /\/categorias\/\d+$/)
     cy.contains('Detalle de la Categoría').should('be.visible')
   })
@@ -64,7 +64,7 @@ describe('Gestión de Categorías', () => {
         // Guardar categoria
         cy.get('#crear-boton').click()
 
-        // Validar mensaje de error por código duplicado
+        // Validar mensaje de error
         cy.contains('Error al crear').should('be.visible')
         cy.contains('Ya existe una categoría con el nombre').should('be.visible')
     })
@@ -92,11 +92,11 @@ describe('Gestión de Categorías', () => {
 
       cy.abrirEntidad('categorias')
 
-      // Filtrar por cliente recién creado
+      // Filtrar por categoría recién creado
       cy.get('#filter-search').type(categoria.nombre)
       cy.get('#filter-boton').click()
 
-      // Seleccionar tercer categoria para editar
+      // Seleccionar categoría recién creada para editar
       cy.seleccionarAccionFila(0,1)
       cy.contains('Editar Categoría').should('be.visible')
       
@@ -107,7 +107,7 @@ describe('Gestión de Categorías', () => {
 
       cy.get('#editar-boton').click()
 
-      // Verificar redirección al detalle del usuario actualizado
+      // Verificar redirección al detalle del categoría actualizado
       cy.url().should('match', /\/categorias\/\d+$/)
       cy.contains('Detalle de la Categoría').should('be.visible')
     })
@@ -118,11 +118,11 @@ describe('Gestión de Categorías', () => {
       cy.crearCategoriaParaPruebas().then((categoria_editar) => {
         cy.abrirEntidad('categorias')
 
-        // Filtrar por cliente recién creado
+        // Filtrar por categoría recién creado
         cy.get('#filter-search').type(categoria.nombre)
         cy.get('#filter-boton').click()
 
-        // Seleccionar tercer categoria para editar
+        // Seleccionar categoría recién creada para editar
         cy.seleccionarAccionFila(0,1)
         cy.contains('Editar Categoría').should('be.visible')
 
@@ -134,7 +134,7 @@ describe('Gestión de Categorías', () => {
         // Guardar categoria
         cy.get('#editar-boton').click()
 
-        // Validar mensaje de error por código duplicado
+        // Validar mensaje de error
         cy.contains('Error al actualizar').should('be.visible')
         cy.contains('Ya existe una categoría con ese nombre').should('be.visible')
       })
@@ -214,7 +214,7 @@ describe('Gestión de Categorías', () => {
 
       // Vista detalle
 
-      // Filtrar por cliente recién creado
+      // Filtrar por categoría recién creado
       cy.get('#filter-search').type(categoria.nombre)
       cy.get('#filter-boton').click()
 
@@ -228,7 +228,7 @@ describe('Gestión de Categorías', () => {
 
       // Vista editar
 
-      // Filtrar por cliente recién creado
+      // Filtrar por categoría recién creado
       cy.get('#filter-search').type(categoria.nombre)
       cy.get('#filter-boton').click()
 

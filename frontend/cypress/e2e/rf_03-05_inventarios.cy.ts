@@ -57,7 +57,7 @@ describe('Gestión de Inventarios', () => {
           // Guardar inventario
           cy.get('#crear-boton').click()
 
-          // Verificar redirección al detalle y visibilidad del usuario
+          // Verificar redirección al detalle y visibilidad del inventario
           cy.url().should('match', /\/inventarios\/\d+$/)
           cy.contains('Detalle del Inventario').should('be.visible')
       })
@@ -92,7 +92,7 @@ describe('Gestión de Inventarios', () => {
               cy.get('#filter-boton').click()
               cy.contains(producto.nombre).should('be.visible')
 
-              // Seleccionar tercer inventario para editar
+              // Seleccionar inventario recién creado para editar
               cy.seleccionarAccionFila(0,1)
               cy.contains('Editar Inventario').should('be.visible')
               
@@ -135,7 +135,7 @@ describe('Gestión de Inventarios', () => {
             cy.get('#filter-boton').click()
             cy.contains(producto.nombre).should('be.visible')
 
-            // Seleccionar tercer inventario para editar
+            // Seleccionar inventario recién creado para editar
             cy.seleccionarAccionFila(0,1)
             cy.contains('Editar Inventario').should('be.visible')
             
@@ -171,7 +171,7 @@ describe('Gestión de Inventarios', () => {
 
           // Vista detalle
 
-          // Filtrar por usuario recién creado
+          // Filtrar por inventario recién creado
           cy.get('#filter-search').type(producto.codigo)
           cy.get('#filter-boton').click()
           cy.contains(producto.nombre).should('be.visible')
@@ -186,7 +186,7 @@ describe('Gestión de Inventarios', () => {
 
           // Vista editar
 
-          // Filtrar por usuario recién creado
+          // Filtrar por inventario recién creado
           cy.get('#filter-search').type(producto.codigo)
           cy.get('#filter-boton').click()
           cy.contains(producto.nombre).should('be.visible')

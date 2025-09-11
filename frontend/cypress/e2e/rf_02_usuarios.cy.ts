@@ -80,7 +80,7 @@ describe('Gestión de usuarios y roles', () => {
 
     // Formulario sin rellenar
 
-    // Guardar producto
+    // Guardar usuario
     cy.get('#crear-boton').click()
 
     // Verificar mensaje de error por datos faltantes
@@ -131,7 +131,7 @@ describe('Gestión de usuarios y roles', () => {
     cy.crearUsuarioParaPruebas().then((usuario) => {
         cy.abrirEntidad('usuarios')  
 
-        // Filtrar por producto recién creado
+        // Filtrar por usuario recién creado
         cy.get('#filter-search').type(usuario.email)
         cy.get('#filter-boton').click()
 
@@ -154,7 +154,7 @@ describe('Gestión de usuarios y roles', () => {
 
       cy.abrirEntidad('usuarios') 
 
-      // Filtrar por usuario admin
+      // Filtrar por usuario recién creado
       cy.get('#filter-search').type(usuario.email)
       cy.get('#filter-boton').click()
       cy.contains(usuario.nombre).should('be.visible')
@@ -185,7 +185,7 @@ describe('Gestión de usuarios y roles', () => {
 
         cy.abrirEntidad('usuarios')  
 
-        // Filtrar por usuario admin
+        // Filtrar por usuario recién creado
         cy.get('#filter-search').type(usuario.email)
         cy.get('#filter-boton').click()
         cy.contains(usuario.nombre).should('be.visible')
@@ -230,7 +230,7 @@ describe('Gestión de usuarios y roles', () => {
       cy.get('#filter-boton').click()
       cy.contains(usuario.nombre).should('be.visible')
 
-      // Navegar a detalle del primer producto
+      // Navegar a detalle del primer usuario
       cy.seleccionarAccionFila(0,0)
       cy.contains('Detalle del Usuario').should('be.visible')
       cy.url().should('match', /\/usuarios\/\d+$/)

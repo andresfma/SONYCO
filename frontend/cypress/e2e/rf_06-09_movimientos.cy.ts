@@ -60,7 +60,6 @@ describe('Gestión de Clientes', () => {
   })
 
   it('No debe crear un nuevo movimiento de entrada/salida con datos requeridos faltantes', () => {
-    // Creación de producto e inventario para el movimiento con cantidad inicial 100
 
     // ENTRADA
     cy.abrirEntidad('movimientos')
@@ -246,7 +245,7 @@ describe('Gestión de Clientes', () => {
     cy.crearCategoriaParaPruebas().then((categoria) => {
       cy.crearProductoParaPruebas(categoria.id).then((producto) => {
         cy.crearInventarioParaPruebas(producto.id).then((inventario) => {
-            // Crear varios movimientos para el producto
+          // Crear varios movimientos para el producto
           cy.crearMovimientoParaPruebas(producto.id, 'ENTRADA', 50).then((entrada) => {
             cy.crearMovimientoParaPruebas(producto.id, 'SALIDA', 20).then((salida) => {
                 

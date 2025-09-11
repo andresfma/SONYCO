@@ -72,7 +72,7 @@ describe('Gestión de Detalles de venta', () => {
     cy.crearUsuarioParaPruebas().then((usuario) => {
         cy.abrirEntidad('usuarios')
 
-        // Filtrar por producto recién creado
+        // Filtrar por usuario recién creado
         cy.get('#filter-search').type(usuario.nombre)
         cy.get('#filter-boton').click()
         cy.contains(usuario.email).should('be.visible')
