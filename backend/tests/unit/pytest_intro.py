@@ -36,7 +36,7 @@ MODULES = {
 GLOBAL_SETTINGS = {
     "db": "sqlite en memoria",
     "reset": "reinicio de DB entre cada test",
-    "total_tests": 289,
+    "total_tests": 290,
     "framework": "pytest + pytest-cov",
 }
 
