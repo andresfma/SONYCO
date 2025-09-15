@@ -6,3 +6,4 @@ __pycache/
 .env*
 *.log
 .DS_Store
+.coverage
