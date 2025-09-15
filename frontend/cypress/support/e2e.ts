@@ -17,11 +17,11 @@
 import './commands'
 import 'cypress-mochawesome-reporter/register';
 
-// // Capturar screenshot después de cada test
-// afterEach(function () {
-//   const testName = this.currentTest?.title;
+// Capturar screenshot después de cada test
+afterEach(function () {
+  const testName = this.currentTest?.title;
 
-//   if (testName) {
-//     cy.screenshot(testName, { capture: 'runner' });
-//   }
-// });
+  if (testName) {
+    cy.screenshot(testName, { capture: 'runner' });
+  }
+});

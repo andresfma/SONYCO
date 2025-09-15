@@ -6,7 +6,7 @@ export default defineConfig({
     baseUrl: "http://localhost:5173",
     viewportWidth: 1440,
     viewportHeight: 900,
-    video: false,                   
+    video: true,
     screenshotOnRunFailure: true,
     env: {
       apiUrl: "http://localhost:8000/api/v1",
@@ -15,14 +15,19 @@ export default defineConfig({
     reporterOptions: {
       charts: true,
       reportPageTitle: "Reporte Cypress",
-      embeddedScreenshots: false,  // no incrusta imágenes en el HTML
-      inlineAssets: true,         // no copia assets dentro del HTML
+      embeddedScreenshots: true,
+      inlineAssets: true,
     },
     setupNodeEvents(on, config) {
-      mochawesome(on);
+      // Conexión con mochawesome como plugin
+      mochawesome(on, config);
+
+      // Retorna config para que Cypress use los cambios
+      return config;
     },
   },
 });
+
 
 
 
