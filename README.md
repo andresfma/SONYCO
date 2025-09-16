@@ -271,12 +271,13 @@ pip install -r requirements.txt
 ```
 
 3. **Configurar variables de entorno del backend:**
+**env.dev**
 ```env.dev
 DATABASE_URL=mysql+mysqlconnector://usuario:password@localhost:3306/sonyco_db
 SECRET_KEY=tu_clave_secreta
 ENTORNO=dev
 ```
-
+**env.test**
 ```env.test
 DATABASE_URL=mysql+mysqlconnector://usuario:password@localhost:3306/sonyco_db_test
 SECRET_KEY=tu_clave_secreta
@@ -301,7 +302,7 @@ VITE_APP_NAME=SONYCO
 cd backend
 python -m app.db.seed
 
-# Usando Makefile (recomendado)
+# Usando Makefile
 make seed-dev
 
 # Puedes usar el usuario admin@admin.com, con contraseña admin
@@ -309,7 +310,7 @@ make seed-dev
 
 7. **Ejecutar el sistema:**
 
-**Backend:**
+- **Backend:**
 ```bash
 cd backend
 uvicorn app.main:app --reload
@@ -318,7 +319,7 @@ uvicorn app.main:app --reload
 make dev
 ```
 
-**Frontend:**
+- **Frontend:**
 ```bash
 cd frontend
 npm run dev
