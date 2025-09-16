@@ -271,13 +271,13 @@ pip install -r requirements.txt
 ```
 
 3. **Configurar variables de entorno del backend:**
-**env.dev**
+- **env.dev**
 ```env.dev
 DATABASE_URL=mysql+mysqlconnector://usuario:password@localhost:3306/sonyco_db
 SECRET_KEY=tu_clave_secreta
 ENTORNO=dev
 ```
-**env.test**
+- **env.test**
 ```env.test
 DATABASE_URL=mysql+mysqlconnector://usuario:password@localhost:3306/sonyco_db_test
 SECRET_KEY=tu_clave_secreta
