@@ -60,7 +60,8 @@ Las pruebas unitarias se enfocan en validar la **lógica de negocio** del sistem
 
 **Tecnología:** pytest + SQLite in-memory  
 **Ubicación:** `tests/unit/`  
-**Cobertura:** 290 pruebas unitarias (~ 94%)  
+**Cobertura:** 290 pruebas unitarias (~ 94%)
+  
 **Características:**
 - Validan la lógica de negocio de forma aislada
 - DB temporal reiniciada entre tests
@@ -81,6 +82,7 @@ Las pruebas de rendimiento evalúan el **comportamiento de los endpoints** bajo 
 **Tecnología:** Locust + MySQL  
 **Ubicación:** `tests/performance/`  
 **Escenarios:** carga baja, media y alta  
+
 **Características:**
 - Simulación de usuarios concurrentes
 - Medición de latencia y throughput

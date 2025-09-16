@@ -40,7 +40,8 @@ Las pruebas funcionales validan el **sistema completo** desde la perspectiva del
 
 **Tecnología:** Cypress  
 **Ubicación:** `cypress/`  
-**Cobertura:** 30 requisitos funcionales | 84 casos de prueba  
+**Cobertura:** 30 requisitos funcionales | 84 casos de prueba
+
 **Características:**
 - **Simulación de usuario real** interactuando con la interfaz
 - **Testing end-to-end** que incluye frontend, backend y base de datos
