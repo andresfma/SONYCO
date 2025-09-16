@@ -20,6 +20,7 @@ def init_db():
         SQLModel.metadata.drop_all(engine)   # elimina todas las tablas
         SQLModel.metadata.create_all(engine) # las inicializa de nuevo
     elif settings.ENTORNO in ["dev", "prod"]:
+        #SQLModel.metadata.drop_all(engine)   # elimina todas las tablas
         SQLModel.metadata.create_all(engine) # crea las tablas si no existen
 
 if __name__ == "__main__":
