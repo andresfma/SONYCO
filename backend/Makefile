@@ -1,7 +1,7 @@
 APP=app.main:app
 UVICORN=uvicorn $(APP) --reload --host ::
 
-.PHONY: dev test prod unit-all init-db-dev init-db-test seed-dev seed-test db-dev db-test locust-sb locust-l locust-m locust-h server-test unit-categoria unit-cliente unit-exportar unit-inventario unit-producto unit-security unit-usuario unit-venta locust-debug locust-intro
+.PHONY: dev test prod unit-all init-db-dev init-db-test seed-dev seed-test db-dev db-test locust-sb locust-l locust-m locust-h server-test unit-categoria unit-cliente unit-exportar unit-inventario unit-producto unit-security unit-usuario unit-venta locust-debug locust-intro unit-all-report unit-cov_report
 
 # ------------------------------
 # Servidores
@@ -24,12 +24,22 @@ prod:
 #Intro
 pytest-intro:
 	python -m tests.unit.pytest_intro
+
 # Ejecutar todos los unit tests con detalles
 unit-all:
 	pytest -v tests/unit/services/
+
+# Genera reporte HTML de todas las pruebas unitarias 
+unit-all-report:
+	pytest -v tests/unit/services/ --html=report.html --self-contained-html
+
 # Ejecutar prueba de cobertura con pytest-cov
 unit-cov:
 	pytest --cov=app.core --cov=app.models --cov=app.schemas --cov=app.services tests/unit/services/
+
+# Genera reporte HTML para la cobertura de las pruebas unitarias
+unit-cov_report:
+	pytest --cov=app.core --cov=app.models --cov=app.schemas --cov=app.services tests/unit/services/ --cov-report=html
 	
 # Ejecutar por módulo
 unit-categoria:
