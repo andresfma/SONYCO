@@ -18,6 +18,11 @@
     - [Gestión de Ventas](#gestión-de-ventas)
     - [Control de Usuarios](#control-de-usuarios)
   - [Estructura del Repositorio](#estructura-del-repositorio)
+  - [Automatización con Makefile](#automatización-con-makefile)
+  - [Testing y Calidad](#testing-y-calidad)
+    - [Pruebas Unitarias](#pruebas-unitarias)
+    - [Pruebas de Rendimiento](#pruebas-de-rendimiento)
+    - [Pruebas Funcionales e Integración](#pruebas-funcionales-e-integración)
   - [Inicio Rápido](#inicio-rápido)
     - [Prerrequisitos](#prerrequisitos)
     - [Configuración Completa](#configuración-completa)
@@ -103,19 +108,140 @@ El sistema gestiona las siguientes entidades principales:
 
 ```
 SONYCO/
-├── frontend/          # Aplicación React (Puerto 5173)
+├── frontend/                    # Aplicación React (Puerto 5173)
 │   ├── src/
-│   │   ├── pages/     # Páginas principales del sistema
-│   │   ├── components/# Componentes reutilizables
-│   │   └── api/       # Configuración de servicios
-│   └── README.md      # Documentación específica del frontend
-├── backend/           # API FastAPI (Puerto 8000)
+│   │   ├── pages/              # Páginas principales del sistema
+│   │   ├── components/         # Componentes reutilizables
+│   │   └── api/                # Configuración de servicios
+│   ├── cypress/                # Pruebas funcionales e integración
+│   │   ├── e2e/               # Tests end-to-end por funcionalidad
+│   │   ├── support/           # Comandos y configuraciones
+│   │   └── fixtures/          # Datos de prueba
+│   └── README.md               # Documentación específica del frontend
+├── backend/                     # API FastAPI (Puerto 8000)
 │   ├── app/
-│   │   ├── api/       # Endpoints de la API
-│   │   ├── models/    # Modelos de datos
-│   │   └── services/  # Lógica de negocio
-│   └── README.md      # Documentación específica del backend
-└── README.md          # Este archivo - documentación general
+│   │   ├── api/               # Endpoints de la API
+│   │   ├── models/            # Modelos de datos
+│   │   └── services/          # Lógica de negocio
+│   ├── tests/
+│   │   ├── unit/              # Pruebas unitarias (pytest)
+│   │   └── performance/       # Pruebas de rendimiento (locust)
+│   ├── Makefile                # Automatización de tareas
+│   └── README.md               # Documentación específica del backend
+└── README.md                    # Este archivo - documentación general
+```
+
+## Automatización con Makefile
+
+El proyecto incluye un **Makefile** del lado del backend que simplifica la ejecución de tareas comunes de desarrollo, testing y despliegue. Este archivo proporciona atajos para comandos frecuentes del proyecto.
+
+### Prerrequisito
+- **GNU Make:** Versión 4.0 o superior
+- **Versión recomendada:** GNU Make 4.4.1 (usada en el entorno de desarrollo)
+
+### Comandos Disponibles
+
+**Gestión de Base de Datos:**
+- `make db-dev` - Inicialización de la base de datos en modo desarrollo (init + seed)
+- `make db-test` - Inicialización de la base de datos en modo prueba (reset + init + seed)
+
+**Servidores de Desarrollo:**
+- `make dev` - Ejecuta el servidor backend en modo desarrollo
+- `make test` - Ejecuta el servidor backend en modo prueba
+
+**Testing:**
+- `make pytest-intro` - Información detallada sobre el entorno de pruebas unitarias
+- `make unit-all` - Ejecuta todas las pruebas unitarias
+- `make locust-intro` - Información sobre el entorno de pruebas de rendimiento
+- `make locust-interactivo` - Sandbox para pruebas de rendimiento con GUI
+
+Para ver todos los comandos disponibles revisar el archivo **Makefile**
+
+## Testing y Calidad
+
+El proyecto implementa una **estrategia de testing integral** que abarca diferentes niveles y tipos de pruebas para garantizar la calidad y confiabilidad del sistema.
+
+### Pruebas Unitarias
+
+**Tecnología:** pytest + SQLite  
+**Ubicación:** `backend/tests/unit/`  
+**Cobertura:** 290 pruebas unitarias ~ 94 %
+
+Las pruebas unitarias se enfocan en validar la **lógica de negocio** del sistema de forma aislada. Utilizan una base de datos SQLite in-memory para optimizar el rendimiento y garantizar la independencia entre tests.
+
+**Características:**
+- **Cobertura completa** de servicios y funciones críticas
+- **Base de datos temporal** que se reinicia entre cada test
+- **Mocks y fixtures** para aislar dependencias externas
+- **Validación de casos límite** y manejo de errores
+
+**Ejecución:**
+```bash
+# Información del entorno de testing
+python -m tests.unit.pytest_intro
+# o usando Makefile
+make pytest-intro
+
+# Ejecutar todas las pruebas unitarias
+make unit-all
+```
+
+### Pruebas de Rendimiento
+
+**Tecnología:** Locust + MySQL  
+**Ubicación:** `backend/tests/performance/`  
+**Escenarios:** 3 niveles de carga (bajo, medio, alto)
+
+Las pruebas de rendimiento evalúan el **comportamiento de los endpoints** bajo diferentes cargas de trabajo, simulando escenarios reales de uso del sistema.
+
+**Características:**
+- **Simulación de usuarios concurrentes** con patrones de uso realistas
+- **Medición de tiempos de respuesta** y throughput
+- **Detección de cuellos de botella** en la API
+- **Base de datos MySQL** dedicada para pruebas
+
+**Ejecución:**
+Se debe garantizar con anterioridad el despliegue del servidor de base de datos.
+```bash
+# Información del entorno de performance
+python -m tests.performance.locust_intro
+# o usando Makefile
+make locust-intro
+
+# Ejecutar pruebas de rendimiento
+make server-test # Inicializa base de datos de pruebas y ejecuta servidor uvicorn
+
+make locust-low
+make locust-medium
+make locust-high
+```
+
+### Pruebas Funcionales e Integración
+
+**Tecnología:** Cypress  
+**Ubicación:** `frontend/cypress/`  
+**Cobertura:** 30 requisitos funcionales | 84 casos de prueba
+
+Las pruebas funcionales validan el **sistema completo** desde la perspectiva del usuario final, verificando que todos los requisitos funcionales se cumplan correctamente.
+
+**Características:**
+- **Simulación de usuario real** interactuando con la interfaz
+- **Testing end-to-end** que incluye frontend, backend y base de datos
+- **Casos positivos y negativos** para cada funcionalidad
+- **Validación de flujos completos** de trabajo
+
+**Distribución de pruebas:**
+- **30 requisitos funcionales** del sistema
+- **84 casos de prueba** total (positivos y negativos)
+- **Cobertura completa** de todos los módulos del sistema
+
+**Ejecución:**
+Se debe garantizar con anterioridad el despliegue de servidores de base de datos, backend y frontend.
+```bash
+# Ejecutar pruebas funcionales
+npx cypress run
+# Acceder al entorno interactivo con GUI
+npx cypress open
 ```
 
 ## Inicio Rápido
@@ -124,6 +250,7 @@ SONYCO/
 - **Node.js** 18.0 o superior (para el frontend)
 - **Python** 3.8 o superior (para el backend)
 - **MySQL** Server (base de datos)
+- **GNU Make** 4.0 o superior (para automatización)
 - **Git** (control de versiones)
 
 ### Configuración Completa
@@ -144,9 +271,16 @@ pip install -r requirements.txt
 ```
 
 3. **Configurar variables de entorno del backend:**
-```env
+```env.dev
 DATABASE_URL=mysql+mysqlconnector://usuario:password@localhost:3306/sonyco_db
 SECRET_KEY=tu_clave_secreta
+ENTORNO=dev
+```
+
+```env.test
+DATABASE_URL=mysql+mysqlconnector://usuario:password@localhost:3306/sonyco_db_test
+SECRET_KEY=tu_clave_secreta
+ENTORNO=test
 ```
 
 4. **Configurar el Frontend:**
@@ -161,10 +295,14 @@ VITE_API_BASE_URL=http://localhost:8000/api/v1
 VITE_APP_NAME=SONYCO
 ```
 
-6. **Inicializar la base de datos:**
+6. **Poblar la base de datos:**
 ```bash
-# Desde la carpeta backend
+# Método tradicional
+cd backend
 python -m app.db.seed
+
+# Usando Makefile (recomendado)
+make seed-dev
 
 # Puedes usar el usuario admin@admin.com, con contraseña admin
 ```
@@ -175,6 +313,9 @@ python -m app.db.seed
 ```bash
 cd backend
 uvicorn app.main:app --reload
+
+# Con makefile
+make dev
 ```
 
 **Frontend:**
@@ -196,13 +337,15 @@ Este proyecto fue desarrollado como **demostración práctica** de competencias 
 - **Buenas prácticas:** Código limpio, documentación y estructuración modular
 - **Gestión de proyectos:** Desarrollo incremental con enfoque ágil
 - **Casos de uso reales:** Solución a problemáticas empresariales concretas
+- **Testing y calidad:** Estrategia integral de pruebas automatizadas
+- **DevOps básico:** Automatización de tareas con Makefile
 
 ### Nota Importante
 Algunas funcionalidades están configuradas específicamente para fines demostrativos y académicos (como el registro abierto de usuarios). En un entorno de producción real, estas configuraciones serían ajustadas según los requerimientos de seguridad empresarial.
 
 ## Contacto
 
-Para más información sobre el proyecto o reporte de alguna incosistencia, por favor, contáctame: andresfma.dev@gmail.com
+Para más información sobre el proyecto o reporte de alguna inconsistencia, por favor, contáctame: andresfma.dev@gmail.com
 
 ---
 
