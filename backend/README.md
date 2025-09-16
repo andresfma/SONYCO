@@ -58,10 +58,9 @@ El backend implementa una estrategia de pruebas integral para asegurar calidad y
 
 Las pruebas unitarias se enfocan en validar la **lógica de negocio** del sistema de forma aislada. Utilizan una base de datos SQLite in-memory para optimizar el rendimiento y garantizar la independencia entre tests.
 
-**Tecnología:** pytest + SQLite in-memory
+**Tecnología:** pytest + SQLite in-memory  
 **Ubicación:** `tests/unit/`  
-**Cobertura:** 290 pruebas unitarias (~ 94%)
-
+**Cobertura:** 290 pruebas unitarias (~ 94%)  
 **Características:**
 - Validan la lógica de negocio de forma aislada
 - DB temporal reiniciada entre tests
@@ -79,9 +78,9 @@ make unit-all
 
 Las pruebas de rendimiento evalúan el **comportamiento de los endpoints** bajo diferentes cargas de trabajo, simulando escenarios reales de uso del sistema.
 
-**Tecnología:** Locust + MySQL
+**Tecnología:** Locust + MySQL  
 **Ubicación:** `tests/performance/`  
-**Escenarios:** carga baja, media y alta
+**Escenarios:** carga baja, media y alta  
 **Características:**
 - Simulación de usuarios concurrentes
 - Medición de latencia y throughput
