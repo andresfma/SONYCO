@@ -201,7 +201,9 @@ Las pruebas de rendimiento evalúan el **comportamiento de los endpoints** bajo 
 - **Base de datos MySQL** dedicada para pruebas
 
 **Ejecución:**
+
 Se debe garantizar con anterioridad el despliegue del servidor de base de datos.
+
 ```bash
 # Información del entorno de performance
 python -m tests.performance.locust_intro
@@ -236,7 +238,9 @@ Las pruebas funcionales validan el **sistema completo** desde la perspectiva del
 - **Cobertura completa** de todos los módulos del sistema
 
 **Ejecución:**
+
 Se debe garantizar con anterioridad el despliegue de servidores de base de datos, backend y frontend.
+
 ```bash
 # Ejecutar pruebas funcionales
 npx cypress run

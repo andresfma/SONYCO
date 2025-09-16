@@ -24,6 +24,38 @@ src/
 ├── routes/        # Configuración de rutas de la aplicación
 ├── types/         # Definiciones de tipos TypeScript
 ├── utils/         # Funciones utilitarias
+cypress/           # Pruebas funcionales e integración
+├── e2e/           # Tests end-to-end por funcionalidad
+├── support/       # Comandos y configuraciones
+└── fixtures/      # Datos de prueba
+```
+
+## Testing y calidad
+
+El backend implementa una estrategia de pruebas integral para asegurar calidad y confiabilidad.
+
+### Pruebas Funcionales e Integración
+
+Las pruebas funcionales validan el **sistema completo** desde la perspectiva del usuario final, verificando que todos los requisitos funcionales se cumplan correctamente.
+
+**Tecnología:** Cypress  
+**Ubicación:** `cypress/`  
+**Cobertura:** 30 requisitos funcionales | 84 casos de prueba
+**Características:**
+- **Simulación de usuario real** interactuando con la interfaz
+- **Testing end-to-end** que incluye frontend, backend y base de datos
+- **Casos positivos y negativos** para cada funcionalidad
+- **Validación de flujos completos** de trabajo
+
+**Ejecución:**
+
+Se debe garantizar con anterioridad el despliegue de servidores de base de datos, backend y frontend.
+
+```bash
+# Ejecutar pruebas funcionales
+npx cypress run
+# Acceder al entorno interactivo con GUI
+npx cypress open
 ```
 
 ## Requisitos Previos
