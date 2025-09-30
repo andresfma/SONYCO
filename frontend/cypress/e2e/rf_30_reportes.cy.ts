@@ -68,7 +68,7 @@ describe('Gestión de Detalles de venta', () => {
   })
 
   // Exportación de movimientos de un usuario
-  it('Debe exportar reporte de movimientos de un producto en particular', () => {
+  it('Debe exportar reporte de movimientos de un usuario en particular', () => {
     cy.crearUsuarioParaPruebas().then((usuario) => {
         cy.abrirEntidad('usuarios')
 
