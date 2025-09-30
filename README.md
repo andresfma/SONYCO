@@ -239,9 +239,12 @@ Las pruebas funcionales validan el **sistema completo** desde la perspectiva del
 
 **Ejecución:**
 
-Se debe garantizar con anterioridad el despliegue de servidores de base de datos, backend y frontend.
+Se debe garantizar con anterioridad el despliegue de servidores de base de datos, backend (con entorno de test) y frontend.
 
 ```bash
+# En la ruta de backend
+make server-test # Inicializa base de datos de pruebas y ejecuta servidor uvicorn
+
 # Ejecutar pruebas funcionales
 npx cypress run
 # Acceder al entorno interactivo con GUI
